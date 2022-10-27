@@ -1,7 +1,7 @@
 QT       += core gui
 QT       += opengl
 QT       += openglwidgets
-
+LIBS += -lglu32 -lopengl32
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
@@ -13,11 +13,15 @@ CONFIG += c++11
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    myglwidget.cpp
+    myglwidget.cpp \
+    rotationslider.cpp
 
 HEADERS += \
     mainwindow.h \
-    myglwidget.h
+    myglwidget.h \
+    observer.h \
+    rotationslider.h \
+    subject.h
 
 FORMS += \
     mainwindow.ui

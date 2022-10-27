@@ -1,18 +1,15 @@
-/***************************************************************************
- *                                                                         *
- *   Copyright (C) 25.10.2022 by Kulikov Pavel                                 *
- *                                                                         *
- *   https://github.com/Crystal2033                                        *
- *                                                                         *
- ***************************************************************************/
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
-#include <QMainWindow>
+#include <QtWidgets/QMainWindow>
+#include <iostream>
+#include <QHBoxLayout>
+#include "myglwidget.h"
+#include <QSurface>
+#include "rotationslider.h"
 
-QT_BEGIN_NAMESPACE
+
 namespace Ui { class MainWindow; }
-QT_END_NAMESPACE
+
 
 class MainWindow : public QMainWindow
 {
@@ -22,7 +19,20 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+protected:
+
+public slots:
+
 private:
-    Ui::MainWindow *ui;
+    MyGLWidget* myGLWidget = nullptr;
+    QVBoxLayout* mainHorLay = nullptr;
+    QHBoxLayout* menuHorLayout = nullptr;
+    Ui::MainWindow* ui;
+    void setRotateSliders();
+    RotationSlider* xRotateSlider = nullptr;
+    RotationSlider* yRotateSlider = nullptr;
+    RotationSlider* zRotateSlider = nullptr;
+    void setXRotateSlider();
+    void setYRotateSlider();
+    void setZRotateSlider();
 };
-#endif // MAINWINDOW_H

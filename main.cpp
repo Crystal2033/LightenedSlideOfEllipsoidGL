@@ -1,18 +1,11 @@
-/***************************************************************************
- *                                                                         *
- *   Copyright (C) 25.10.2022 by Kulikov Pavel                                 *
- *                                                                         *
- *   https://github.com/Crystal2033                                        *
- *                                                                         *
- ***************************************************************************/
 #include "mainwindow.h"
-
-#include <QApplication>
+#include <QtWidgets/QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
+    w.resize(640, 480);
     w.show();
     return a.exec();
 }
