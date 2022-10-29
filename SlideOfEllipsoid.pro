@@ -3,7 +3,7 @@ QT       += opengl
 QT       += openglwidgets
 LIBS += -lglu32 -lopengl32
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
+INCLUDEPATH += D:\Paul\Programming\libraries\glm\glm\glm #Insert your glm path
 CONFIG += c++11
 
 # You can make your code fail to compile if it uses deprecated APIs.

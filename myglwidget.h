@@ -11,6 +11,8 @@
 #include <qopenglfunctions.h>
 #include <gl/GLU.h>
 #include "observer.h"
+#include <gl/GL.h>
+#include <glm.hpp>
 
 class MyGLWidget : public  QOpenGLWidget, public QOpenGLFunctions, public InterfaceObserver{
 
@@ -23,6 +25,13 @@ private:
     float xRotTheta = 0.0f;
     float yRotTheta= 0.0f;
     float zRotTheta= 0.0f;
+    void drawFigure();
+    void initFigure();
+
+    std::vector<glm::vec3> figure;
+    int valueOfEdges = 100;
+    GLuint vertexVBO;
+    GLuint colorVBO;
 
 public:
     void updateObserver(const float value, const char axisName) override;
