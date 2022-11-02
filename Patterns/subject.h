@@ -17,7 +17,7 @@ public:
     virtual ~InterfaceSubject() = default;
     virtual void addObserver(InterfaceObserver* observer) = 0;
     virtual void removeObserver(InterfaceObserver* observer) = 0;
-    virtual void notifyObservers() = 0;
+    virtual void notifyObservers() const = 0;
 };
 
 #endif // SUBJECT_H

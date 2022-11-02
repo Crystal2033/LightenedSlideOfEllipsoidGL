@@ -5,8 +5,7 @@
 #include <QHBoxLayout>
 #include "myglwidget.h"
 #include <QSurface>
-#include "rotationslider.h"
-
+#include "Sliders/abstractslider.h"
 
 namespace Ui { class MainWindow; }
 
@@ -24,15 +23,23 @@ protected:
 public slots:
 
 private:
-    MyGLWidget* myGLWidget = nullptr;
-    QVBoxLayout* mainHorLay = nullptr;
-    QHBoxLayout* menuHorLayout = nullptr;
-    Ui::MainWindow* ui;
     void setRotateSliders();
-    RotationSlider* xRotateSlider = nullptr;
-    RotationSlider* yRotateSlider = nullptr;
-    RotationSlider* zRotateSlider = nullptr;
     void setXRotateSlider();
     void setYRotateSlider();
     void setZRotateSlider();
+
+    void setApproximateSlider();
+
+    MyGLWidget* myGLWidget = nullptr;
+    QVBoxLayout* mainHorLay = nullptr;
+    QVBoxLayout* menuVertLayout = nullptr;
+    QHBoxLayout* rotationSlidersLay = nullptr;
+    QHBoxLayout* approxSliderLay = nullptr;
+    Ui::MainWindow* ui;
+
+    AbstractSlider* xRotateSlider = nullptr;
+    AbstractSlider* yRotateSlider = nullptr;
+    AbstractSlider* zRotateSlider = nullptr;
+    AbstractSlider* approximateSlider = nullptr;
+
 };

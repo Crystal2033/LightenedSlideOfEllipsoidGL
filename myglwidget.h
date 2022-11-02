@@ -10,7 +10,7 @@
 #include <QOpenGLWidget>
 #include <qopenglfunctions.h>
 #include <gl/GLU.h>
-#include "observer.h"
+#include "Patterns/observer.h"
 #include <gl/GL.h>
 #include <glm.hpp>
 
@@ -29,12 +29,13 @@ private:
     void initFigure();
 
     std::vector<glm::vec3> figure;
-    int valueOfEdges = 100;
+    std::vector<glm::vec3> colors;
+    int valueOfEdges = 3;
     GLuint vertexVBO;
     GLuint colorVBO;
 
 public:
-    void updateObserver(const float value, const char axisName) override;
+    void updateObserver(const float value, CHANGE_TYPE changeType) override;
 };
 
 #endif // MYGLWIDGET_H

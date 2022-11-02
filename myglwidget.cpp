@@ -19,6 +19,12 @@ void MyGLWidget::initializeGL()
         glBufferData(GL_ARRAY_BUFFER, figure.size() * sizeof(glm::vec3), figure.data(), GL_STATIC_DRAW);//GL_STREAM_DRAW
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+    glGenBuffers(1, &colorVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, colorVBO);
+        glBufferData(GL_ARRAY_BUFFER, colors.size() * sizeof(glm::vec3), colors.data(), GL_STATIC_DRAW);//GL_STREAM_DRAW
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
 }
 
 void MyGLWidget::resizeGL(int w, int h)
@@ -37,12 +43,9 @@ void MyGLWidget::paintGL()
     qInfo() << "paintGL";
 
     glLoadIdentity();
-    //glClearColor(0.39, 0.58, 0.93, 0.2);
+    glClearColor(0.39, 0.58, 0.93, 0.2);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-    //glFrustum(-10, 10, -10, 10, 0,  2);
-    //glMatrixMode(GL_PROJECTION);
 
     drawFigure();
 
@@ -54,21 +57,28 @@ void MyGLWidget::drawFigure()
 {
 
     glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity();
-      glTranslatef(0.0, 0.0, 0.0);
-      glScalef(1, 1, 1);
-      glRotatef(xRotTheta, 1, 0, 0);
-      glRotatef(yRotTheta, 0, 1, 0);
-      glRotatef(zRotTheta, 0, 0, 1);
+    glLoadIdentity();
+    glTranslatef(0.0, 0.0, 0.0);
+    glScalef(1, 1, 1);
+    glRotatef(xRotTheta, 1, 0, 0);
+    glRotatef(yRotTheta, 0, 1, 0);
+    glRotatef(zRotTheta, 0, 0, 1);
 
 
     glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
     glVertexPointer(3, GL_FLOAT, 0, NULL);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+    glBindBuffer(GL_ARRAY_BUFFER, colorVBO);
+    glColorPointer(3, GL_FLOAT, 0, NULL);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
     glEnableClientState(GL_VERTEX_ARRAY);
-    glColor3f(1, 0, 1);
+    glEnableClientState(GL_COLOR_ARRAY);
+    //glColor3f(1, 0, 1);
+
     glDrawArrays(GL_POLYGON, 0, valueOfEdges);
+    glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
 }
 
@@ -77,31 +87,37 @@ void MyGLWidget::initFigure()
     float x, y, z;
     int a = 1;
     int b = 1;
+
     for(int i = 0; i < valueOfEdges; i++){
         x = cos(i*2*M_PI/valueOfEdges)/a;
-        qInfo() << "x = " << x;
+        //qInfo() << "x = " << x;
         y = sin(i*2*M_PI/valueOfEdges)/b;
-        qInfo() << "y = " << y;
-        z = 0.1;
-        qInfo() << "z = " << z;
+        //qInfo() << "y = " << y;
+        z = 0.5;
+        //qInfo() << "z = " << z;
         figure.push_back(glm::vec3(x, y, z));
+        colors.push_back(glm::vec3(abs(x), abs(y), abs(z)));
     }
 }
 
-void MyGLWidget::updateObserver(const float value, const char axisName)
+void MyGLWidget::updateObserver(const float value, CHANGE_TYPE changeType)
 {
-    switch (axisName)
+    switch (changeType)
         {
-        case 'X': {
+        case XROT: {
             xRotTheta = value;
             break;
         }
-        case 'Y': {
+        case YROT: {
             yRotTheta = value;
             break;
         }
-        case 'Z': {
+        case ZROT: {
             zRotTheta = value;
+            break;
+        }
+        case APROX: {
+            valueOfEdges = value;
             break;
         }
         default:
