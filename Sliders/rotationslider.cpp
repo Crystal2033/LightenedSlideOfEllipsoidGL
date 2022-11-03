@@ -19,7 +19,7 @@ void RotationSlider::createSlider(QBoxLayout& layout, CHANGE_TYPE changeType) {
     axisHorLay->addWidget(axisNumGadget, 1);
 
     layout.addLayout(axisHorLay);
-    connect(axisSlider, SIGNAL(valueChanged(int)), SLOT(onValueChanged(int)));
+    connect(axisSlider, &QSlider::valueChanged, this, &RotationSlider::onValueChanged);
 }
 
 void RotationSlider::onValueChanged(int val) {

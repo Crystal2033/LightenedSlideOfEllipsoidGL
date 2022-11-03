@@ -25,8 +25,13 @@ private:
     float xRotTheta = 0.0f;
     float yRotTheta= 0.0f;
     float zRotTheta= 0.0f;
+
     void drawFigure();
-    void initFigure();
+    void makeFigure();
+    void insertFigureInBuffer();
+    void transformFigure();
+    void reconstructFigure();
+    void drawDataFromBuffer();
 
     std::vector<glm::vec3> figure;
     std::vector<glm::vec3> colors;
@@ -36,6 +41,7 @@ private:
 
 public:
     void updateObserver(const float value, CHANGE_TYPE changeType) override;
+
 };
 
 #endif // MYGLWIDGET_H

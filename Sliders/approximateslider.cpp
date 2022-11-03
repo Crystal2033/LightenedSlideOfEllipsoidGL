@@ -19,7 +19,7 @@ void ApproximateSlider::createSlider(QBoxLayout &layout, CHANGE_TYPE changeType)
     this->changeType = changeType;
     approxLabel = new QLabel(getNameByChangeType());
     approxSlider = new QSlider(Qt::Horizontal);
-    approxSlider->setRange(3, 40);
+    approxSlider->setRange(3, 100);
     approxSlider->setValue(3);
     approxSlider->setTickPosition(QSlider::TicksBelow);
 
@@ -37,7 +37,6 @@ void ApproximateSlider::createSlider(QBoxLayout &layout, CHANGE_TYPE changeType)
 
 void ApproximateSlider::onValueChanged(int val)
 {
-    qInfo() << val;
     value = val;
     approxNumGadget->display(value);
     notifyObservers();
