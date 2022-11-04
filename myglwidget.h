@@ -33,8 +33,12 @@ private:
     void reconstructFigure();
     void drawDataFromBuffer();
 
-    std::vector<glm::vec3> figure;
-    std::vector<glm::vec3> colors;
+    std::vector<glm::vec3> upperFigurePlane;
+    std::vector<glm::vec3> middleFigurePlane;
+    std::vector<glm::vec3> downFigurePlane;
+    std::vector<glm::vec3> colorsUpper;
+    std::vector<glm::vec3> colorsMiddle;
+    std::vector<glm::vec3> colorsDown;
     int valueOfEdges = 3;
     GLuint vertexVBO;
     GLuint colorVBO;
