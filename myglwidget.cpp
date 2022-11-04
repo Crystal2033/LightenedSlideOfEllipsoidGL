@@ -34,6 +34,7 @@ void MyGLWidget::paintGL()
     glClearColor(0.39, 0.58, 0.93, 0.2);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
     drawFigure();
 
     glFlush();
@@ -44,7 +45,6 @@ void MyGLWidget::drawFigure()
     transformFigure();
 
     drawDataFromBuffer();
-
 }
 
 void MyGLWidget::makeFigure()
@@ -55,67 +55,118 @@ void MyGLWidget::makeFigure()
 
     for(int i = 0; i < valueOfEdges; i++){
         x = a*cos(i*2*M_PI/valueOfEdges);
-        //qInfo() << "x = " << x;
         y = b*sin(i*2*M_PI/valueOfEdges);
-        //qInfo() << "y = " << y;
         z = -1;
-        //qInfo() << "z = " << z;
         upperFigurePlane.push_back(glm::vec3(x, y, z));
         colorsUpper.push_back(glm::vec3(abs(x), abs(y), abs(y)));
     }
 
     for(int i = 0; i < valueOfEdges; i++){
         x = 1.2*a*cos(i*2*M_PI/valueOfEdges);
-       // qInfo() << "x2 = " << x;
         y = 1.2*b*sin(i*2*M_PI/valueOfEdges);
-        //qInfo() << "y2 = " << y;
-        z = -1.5;
-        //qInfo() << "z2 = " << z;
+        z = -1.25;
         middleFigurePlane.push_back(glm::vec3(x, y, z));
         colorsMiddle.push_back(glm::vec3(abs(0.1), abs(0.5), abs(0.3)));
+        if(i != 0){
+            upAndMidFlatsFences.push_back(upperFigurePlane[i - 1]);
+            upAndMidFlatsFences.push_back(middleFigurePlane[i - 1]);
+
+            upAndMidFlatsFences.push_back(middleFigurePlane[i]);
+            upAndMidFlatsFences.push_back(upperFigurePlane[i]);
+
+            upAndMidFlatsColors.push_back(glm::vec3(0.5, 0.5, 0.5));
+            upAndMidFlatsColors.push_back(glm::vec3(0.5, 0.5, 0.5));
+            upAndMidFlatsColors.push_back(glm::vec3(0.5, 0.5, 0.5));
+            upAndMidFlatsColors.push_back(glm::vec3(0.5, 0.5, 0.5));
+        }
     }
+    upAndMidFlatsFences.push_back(upperFigurePlane[0]);
+    upAndMidFlatsFences.push_back(middleFigurePlane[0]);
+
+    upAndMidFlatsFences.push_back(middleFigurePlane[valueOfEdges - 1]);
+    upAndMidFlatsFences.push_back(upperFigurePlane[valueOfEdges - 1]);
+
+    upAndMidFlatsColors.push_back(glm::vec3(0.5, 0.5, 0.5));
+    upAndMidFlatsColors.push_back(glm::vec3(0.5, 0.5, 0.5));
+    upAndMidFlatsColors.push_back(glm::vec3(0.5, 0.5, 0.5));
+    upAndMidFlatsColors.push_back(glm::vec3(0.5, 0.5, 0.5));
+
+
+    qInfo() << upAndMidFlatsFences.size();
 
     for(int i = 0; i < valueOfEdges; i++){
-        x = a*cos(i*2*M_PI/valueOfEdges);
-        //qInfo() << "x = " << x;
-        y = b*sin(i*2*M_PI/valueOfEdges);
-        //qInfo() << "y = " << y;
-        z = -2;
-        //qInfo() << "z = " << z;
-        downFigurePlane.push_back(glm::vec3(x, y, z));
-        colorsDown.push_back(glm::vec3(abs(y), abs(x), abs(x)));
+        bottomFigurePlane.push_back(glm::vec3(upperFigurePlane[i].x, upperFigurePlane[i].y, middleFigurePlane[0].z + (middleFigurePlane[0].z- upperFigurePlane[0].z)));
+        if(i != 0){
+            midAndBotFlatsFences.push_back(middleFigurePlane[i - 1]);
+            midAndBotFlatsFences.push_back(bottomFigurePlane[i - 1]);
+
+            midAndBotFlatsFences.push_back(bottomFigurePlane[i]);
+            midAndBotFlatsFences.push_back(middleFigurePlane[i]);
+            midAndBotFlatsColors.push_back(glm::vec3(0.0, 0.0, 0.0));
+            midAndBotFlatsColors.push_back(glm::vec3(0.0, 0.0, 0.0));
+            midAndBotFlatsColors.push_back(glm::vec3(0.0, 0.0, 0.0));
+            midAndBotFlatsColors.push_back(glm::vec3(0.0, 0.0, 0.0));
+        }
     }
+    midAndBotFlatsFences.push_back(middleFigurePlane[0]);
+    midAndBotFlatsFences.push_back(bottomFigurePlane[0]);
+
+    midAndBotFlatsFences.push_back(bottomFigurePlane[valueOfEdges - 1]);
+    midAndBotFlatsFences.push_back(middleFigurePlane[valueOfEdges - 1]);
+    midAndBotFlatsColors.push_back(glm::vec3(0.0, 0.0, 0.0));
+    midAndBotFlatsColors.push_back(glm::vec3(0.0, 0.0, 0.0));
+    midAndBotFlatsColors.push_back(glm::vec3(0.0, 0.0, 0.0));
+    midAndBotFlatsColors.push_back(glm::vec3(0.0, 0.0, 0.0));
+
+    colorsBottom = colorsUpper;
 }
 
 void MyGLWidget::insertFigureInBuffer()
 {
-    glGenBuffers(1, &vertexVBO[0]);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexVBO[0]);
+    //UPPER ellipse flat
+    glGenBuffers(1, &flatsVBO[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, flatsVBO[0]);
     glBufferData(GL_ARRAY_BUFFER, upperFigurePlane.size() * sizeof(glm::vec3), upperFigurePlane.data(), GL_DYNAMIC_DRAW);//GL_STREAM_DRAW
-    //glGenBuffers(1, &colorVBO);
 
-    glGenBuffers(1, colorVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, colorVBO[0]);
+    glGenBuffers(1, flatsColor);
+    glBindBuffer(GL_ARRAY_BUFFER, flatsColor[0]);
     glBufferData(GL_ARRAY_BUFFER, colorsUpper.size() * sizeof(glm::vec3), colorsUpper.data(), GL_DYNAMIC_DRAW);//GL_STREAM_DRAW
-    //glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    glGenBuffers(1, &vertexVBO[1]);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexVBO[1]);
+    //MIDDLE ellipse flat
+    glGenBuffers(1, &flatsVBO[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, flatsVBO[1]);
     glBufferData(GL_ARRAY_BUFFER, middleFigurePlane.size() * sizeof(glm::vec3), middleFigurePlane.data(), GL_DYNAMIC_DRAW);//GL_STREAM_DRAW
 
-    glGenBuffers(1, &colorVBO[1]);
-    glBindBuffer(GL_ARRAY_BUFFER, colorVBO[1]);
+    glGenBuffers(1, &flatsColor[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, flatsColor[1]);
     glBufferData(GL_ARRAY_BUFFER, colorsMiddle.size() * sizeof(glm::vec3), colorsMiddle.data(), GL_DYNAMIC_DRAW);//GL_STREAM_DRAW
 
-    glGenBuffers(1, &vertexVBO[2]);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexVBO[2]);
-    glBufferData(GL_ARRAY_BUFFER, downFigurePlane.size() * sizeof(glm::vec3), downFigurePlane.data(), GL_DYNAMIC_DRAW);//GL_STREAM_DRAW
+    //BOTTOM ellipse flat
+    glGenBuffers(1, &flatsVBO[2]);
+    glBindBuffer(GL_ARRAY_BUFFER, flatsVBO[2]);
+    glBufferData(GL_ARRAY_BUFFER, bottomFigurePlane.size() * sizeof(glm::vec3), bottomFigurePlane.data(), GL_DYNAMIC_DRAW);//GL_STREAM_DRAW
 
-    glGenBuffers(1, &colorVBO[2]);
-    glBindBuffer(GL_ARRAY_BUFFER, colorVBO[2]);
-    glBufferData(GL_ARRAY_BUFFER, colorsDown.size() * sizeof(glm::vec3), colorsDown.data(), GL_DYNAMIC_DRAW);//GL_STREAM_DRAW
+    glGenBuffers(1, &flatsColor[2]);
+    glBindBuffer(GL_ARRAY_BUFFER, flatsColor[2]);
+    glBufferData(GL_ARRAY_BUFFER, colorsBottom.size() * sizeof(glm::vec3), colorsBottom.data(), GL_DYNAMIC_DRAW);//GL_STREAM_DRAW
 
+    //UPPER ellipse ring (connecting middle and upper flats)
+    glGenBuffers(1, &fencesVBO[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, fencesVBO[0]);
+    glBufferData(GL_ARRAY_BUFFER, upAndMidFlatsFences.size() * sizeof(glm::vec3), upAndMidFlatsFences.data(), GL_DYNAMIC_DRAW);//GL_STREAM_DRAW
 
+    glGenBuffers(1, &fencesColor[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, fencesColor[0]);
+    glBufferData(GL_ARRAY_BUFFER, upAndMidFlatsColors.size() * sizeof(glm::vec3), upAndMidFlatsColors.data(), GL_DYNAMIC_DRAW);//GL_STREAM_DRAW
+
+    //BOTTOM ellipse ring (connecting middle and bottom flats)
+    glGenBuffers(1, &fencesVBO[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, fencesVBO[1]);
+    glBufferData(GL_ARRAY_BUFFER, midAndBotFlatsFences.size() * sizeof(glm::vec3), midAndBotFlatsFences.data(), GL_DYNAMIC_DRAW);//GL_STREAM_DRAW
+
+    glGenBuffers(1, &fencesColor[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, fencesColor[1]);
+    glBufferData(GL_ARRAY_BUFFER, midAndBotFlatsColors.size() * sizeof(glm::vec3), midAndBotFlatsColors.data(), GL_DYNAMIC_DRAW);//GL_STREAM_DRAW
 
 }
 
@@ -124,7 +175,7 @@ void MyGLWidget::transformFigure()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    gluLookAt(0, -5, 1, 0, 0, -1, 0, 1, 0);
+    gluLookAt(0, -3, 1, 0, 0, -1, 0, 1, 0);
 
     glTranslatef(0, 0, -1);
     glRotatef(xRotTheta, 1, 0, 0);
@@ -162,24 +213,19 @@ void MyGLWidget::updateObserver(const float value, CHANGE_TYPE changeType)
 
 void MyGLWidget::reconstructFigure()
 {
-    upperFigurePlane.clear();
-    colorsUpper.clear();
-    middleFigurePlane.clear();
-    colorsMiddle.clear();
-    downFigurePlane.clear();
-    colorsDown.clear();
+    clearFigure();
     makeFigure();
     insertFigureInBuffer();
 }
 
 void MyGLWidget::drawDataFromBuffer()
 {
-    for(int i = 0; i < 3; i++){
-        glBindBuffer(GL_ARRAY_BUFFER, vertexVBO[i]);
+    for(int i = 0; i < 3; i++){ //TODO: probably middle flat could be just a empty circle
+        glBindBuffer(GL_ARRAY_BUFFER, flatsVBO[i]);
         glVertexPointer(3, GL_FLOAT, 0, NULL);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-        glBindBuffer(GL_ARRAY_BUFFER, colorVBO[i]);
+        glBindBuffer(GL_ARRAY_BUFFER, flatsColor[i]);
         glColorPointer(3, GL_FLOAT, 0, NULL);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -190,4 +236,38 @@ void MyGLWidget::drawDataFromBuffer()
         glDisableClientState(GL_VERTEX_ARRAY);
     }
 
+    for(int i = 0; i < 2; i++){ //TODO: probably middle flat could be just a empty circle
+        glBindBuffer(GL_ARRAY_BUFFER, fencesVBO[i]);
+        glVertexPointer(3, GL_FLOAT, 0, NULL);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        glBindBuffer(GL_ARRAY_BUFFER, fencesColor[i]);
+        glColorPointer(3, GL_FLOAT, 0, NULL);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+            glDrawArrays(GL_QUADS, 0, valueOfEdges*4);
+        glDisableClientState(GL_COLOR_ARRAY);
+        glDisableClientState(GL_VERTEX_ARRAY);
+    }
+
+}
+
+void MyGLWidget::clearFigure()
+{
+    upperFigurePlane.clear();
+    colorsUpper.clear();
+
+    middleFigurePlane.clear();
+    colorsMiddle.clear();
+
+    bottomFigurePlane.clear();
+    colorsBottom.clear();
+
+    upAndMidFlatsFences.clear();
+    upAndMidFlatsColors.clear();
+
+    midAndBotFlatsFences.clear();
+    midAndBotFlatsColors.clear();
 }

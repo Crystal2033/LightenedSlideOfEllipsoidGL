@@ -32,20 +32,28 @@ private:
     void transformFigure();
     void reconstructFigure();
     void drawDataFromBuffer();
+    void clearFigure();
 
     std::vector<glm::vec3> upperFigurePlane;
     std::vector<glm::vec3> middleFigurePlane;
-    std::vector<glm::vec3> downFigurePlane;
+    std::vector<glm::vec3> bottomFigurePlane;
+
     std::vector<glm::vec3> colorsUpper;
     std::vector<glm::vec3> colorsMiddle;
-    std::vector<glm::vec3> colorsDown;
+    std::vector<glm::vec3> colorsBottom;
+
+    std::vector<glm::vec3> upAndMidFlatsFences;
+    std::vector<glm::vec3> midAndBotFlatsFences;
+
+    std::vector<glm::vec3> upAndMidFlatsColors;
+    std::vector<glm::vec3> midAndBotFlatsColors;
+
     int valueOfEdges = 3;
-    GLuint vertexVBO[3];
-    GLuint colorVBO[3];
+    GLuint flatsVBO[3];
+    GLuint flatsColor[3];
 
-    GLuint vertexVBO2;
-    GLuint colorVBO2;
-
+    GLuint fencesVBO[2];
+    GLuint fencesColor[2];
 
 public:
     void updateObserver(const float value, CHANGE_TYPE changeType) override;
