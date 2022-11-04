@@ -40,8 +40,12 @@ private:
     std::vector<glm::vec3> colorsMiddle;
     std::vector<glm::vec3> colorsDown;
     int valueOfEdges = 3;
-    GLuint vertexVBO;
-    GLuint colorVBO;
+    GLuint vertexVBO[3];
+    GLuint colorVBO[3];
+
+    GLuint vertexVBO2;
+    GLuint colorVBO2;
+
 
 public:
     void updateObserver(const float value, CHANGE_TYPE changeType) override;

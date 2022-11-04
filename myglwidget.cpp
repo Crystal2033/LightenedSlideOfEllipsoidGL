@@ -50,32 +50,73 @@ void MyGLWidget::drawFigure()
 void MyGLWidget::makeFigure()
 {
     float x, y, z;
-    int a = 1;
-    int b = 2;
+    int a = 2;
+    int b = 1;
 
     for(int i = 0; i < valueOfEdges; i++){
-        x = cos(i*2*M_PI/valueOfEdges)/a;
-        qInfo() << "x = " << x;
-        y = sin(i*2*M_PI/valueOfEdges)/b;
-        qInfo() << "y = " << y;
+        x = a*cos(i*2*M_PI/valueOfEdges);
+        //qInfo() << "x = " << x;
+        y = b*sin(i*2*M_PI/valueOfEdges);
+        //qInfo() << "y = " << y;
         z = -1;
-        qInfo() << "z = " << z;
+        //qInfo() << "z = " << z;
         upperFigurePlane.push_back(glm::vec3(x, y, z));
-        colorsUpper.push_back(glm::vec3(abs(0), abs(x), abs(0)));
+        colorsUpper.push_back(glm::vec3(abs(x), abs(y), abs(y)));
+    }
+
+    for(int i = 0; i < valueOfEdges; i++){
+        x = 1.2*a*cos(i*2*M_PI/valueOfEdges);
+       // qInfo() << "x2 = " << x;
+        y = 1.2*b*sin(i*2*M_PI/valueOfEdges);
+        //qInfo() << "y2 = " << y;
+        z = -1.5;
+        //qInfo() << "z2 = " << z;
+        middleFigurePlane.push_back(glm::vec3(x, y, z));
+        colorsMiddle.push_back(glm::vec3(abs(0.1), abs(0.5), abs(0.3)));
+    }
+
+    for(int i = 0; i < valueOfEdges; i++){
+        x = a*cos(i*2*M_PI/valueOfEdges);
+        //qInfo() << "x = " << x;
+        y = b*sin(i*2*M_PI/valueOfEdges);
+        //qInfo() << "y = " << y;
+        z = -2;
+        //qInfo() << "z = " << z;
+        downFigurePlane.push_back(glm::vec3(x, y, z));
+        colorsDown.push_back(glm::vec3(abs(y), abs(x), abs(x)));
     }
 }
 
 void MyGLWidget::insertFigureInBuffer()
 {
-    glGenBuffers(1, &vertexVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
-    glBufferData(GL_ARRAY_BUFFER, upperFigurePlane.size() * sizeof(glm::vec3), upperFigurePlane.data(), GL_STATIC_DRAW);//GL_STREAM_DRAW
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glGenBuffers(1, &vertexVBO[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexVBO[0]);
+    glBufferData(GL_ARRAY_BUFFER, upperFigurePlane.size() * sizeof(glm::vec3), upperFigurePlane.data(), GL_DYNAMIC_DRAW);//GL_STREAM_DRAW
+    //glGenBuffers(1, &colorVBO);
 
-    glGenBuffers(1, &colorVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, colorVBO);
-    glBufferData(GL_ARRAY_BUFFER, colorsUpper.size() * sizeof(glm::vec3), colorsUpper.data(), GL_STATIC_DRAW);//GL_STREAM_DRAW
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glGenBuffers(1, colorVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, colorVBO[0]);
+    glBufferData(GL_ARRAY_BUFFER, colorsUpper.size() * sizeof(glm::vec3), colorsUpper.data(), GL_DYNAMIC_DRAW);//GL_STREAM_DRAW
+    //glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glGenBuffers(1, &vertexVBO[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexVBO[1]);
+    glBufferData(GL_ARRAY_BUFFER, middleFigurePlane.size() * sizeof(glm::vec3), middleFigurePlane.data(), GL_DYNAMIC_DRAW);//GL_STREAM_DRAW
+
+    glGenBuffers(1, &colorVBO[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, colorVBO[1]);
+    glBufferData(GL_ARRAY_BUFFER, colorsMiddle.size() * sizeof(glm::vec3), colorsMiddle.data(), GL_DYNAMIC_DRAW);//GL_STREAM_DRAW
+
+    glGenBuffers(1, &vertexVBO[2]);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexVBO[2]);
+    glBufferData(GL_ARRAY_BUFFER, downFigurePlane.size() * sizeof(glm::vec3), downFigurePlane.data(), GL_DYNAMIC_DRAW);//GL_STREAM_DRAW
+
+    glGenBuffers(1, &colorVBO[2]);
+    glBindBuffer(GL_ARRAY_BUFFER, colorVBO[2]);
+    glBufferData(GL_ARRAY_BUFFER, colorsDown.size() * sizeof(glm::vec3), colorsDown.data(), GL_DYNAMIC_DRAW);//GL_STREAM_DRAW
+
+
+
 }
 
 void MyGLWidget::transformFigure()
@@ -83,7 +124,7 @@ void MyGLWidget::transformFigure()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    gluLookAt(0, 0, 1, 0, 0, -1, 0, 1, 0);
+    gluLookAt(0, -5, 1, 0, 0, -1, 0, 1, 0);
 
     glTranslatef(0, 0, -1);
     glRotatef(xRotTheta, 1, 0, 0);
@@ -123,23 +164,30 @@ void MyGLWidget::reconstructFigure()
 {
     upperFigurePlane.clear();
     colorsUpper.clear();
+    middleFigurePlane.clear();
+    colorsMiddle.clear();
+    downFigurePlane.clear();
+    colorsDown.clear();
     makeFigure();
     insertFigureInBuffer();
 }
 
 void MyGLWidget::drawDataFromBuffer()
 {
-    glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
-    glVertexPointer(3, GL_FLOAT, 0, NULL);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    for(int i = 0; i < 3; i++){
+        glBindBuffer(GL_ARRAY_BUFFER, vertexVBO[i]);
+        glVertexPointer(3, GL_FLOAT, 0, NULL);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, colorVBO);
-    glColorPointer(3, GL_FLOAT, 0, NULL);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, colorVBO[i]);
+        glColorPointer(3, GL_FLOAT, 0, NULL);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-        glDrawArrays(GL_POLYGON, 0, valueOfEdges);
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+            glDrawArrays(GL_POLYGON, 0, valueOfEdges);
+        glDisableClientState(GL_COLOR_ARRAY);
+        glDisableClientState(GL_VERTEX_ARRAY);
+    }
+
 }
