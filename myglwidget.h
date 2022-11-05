@@ -33,8 +33,11 @@ private:
     void reconstructFigure();
     void drawDataFromBuffer();
     void clearFigure();
+    void installShaders();
 
-    std::vector<glm::vec3> upperFigurePlane;
+    std::vector<float> upperFigurePlane;
+    std::vector<unsigned int> indexesUpperPlane;
+
     std::vector<glm::vec3> middleFigurePlane;
     std::vector<glm::vec3> bottomFigurePlane;
 
