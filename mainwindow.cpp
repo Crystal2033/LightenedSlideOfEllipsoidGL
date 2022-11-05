@@ -34,28 +34,32 @@ void MainWindow::setRotateSliders() {
 }
 
 void MainWindow::setXRotateSlider() {
-    xRotateSlider = new RotationSlider();
-    xRotateSlider->createSlider(*rotationSlidersLay, XROT);
-    xRotateSlider->addObserver(myGLWidget);
+    createSlider(xRotateSlider, rotationSlidersLay, XROT);
 }
 
 void MainWindow::setYRotateSlider() {
-    yRotateSlider = new RotationSlider();
-    yRotateSlider->createSlider(*rotationSlidersLay, YROT);
-    yRotateSlider->addObserver(myGLWidget);
+    createSlider(yRotateSlider, rotationSlidersLay, YROT);
 }
 
 void MainWindow::setZRotateSlider() {
-    zRotateSlider = new RotationSlider();
-    zRotateSlider->createSlider(*rotationSlidersLay, ZROT);
-    zRotateSlider->addObserver(myGLWidget);
+    createSlider(zRotateSlider, rotationSlidersLay, ZROT);
 }
 
-void MainWindow::setApproximateSlider()
+void MainWindow::createSlider(AbstractSlider *&slider, QBoxLayout *lay, CHANGE_TYPE type)
 {
-    approximateSlider = new ApproximateSlider();
-    approximateSlider->createSlider(*approxSliderLay, APROX);
-    approximateSlider->addObserver(myGLWidget);
+    if(type == XROT || type == YROT || type == ZROT){
+           slider = new RotationSlider();
+    }
+    else if(type == APROX){
+        slider = new ApproximateSlider();
+    }
+
+    slider->createSlider(*lay, type);
+    slider->addObserver(myGLWidget);
+}
+
+void MainWindow::setApproximateSlider(){
+    createSlider(approximateSlider, approxSliderLay, APROX);
 }
 
 MainWindow::~MainWindow()

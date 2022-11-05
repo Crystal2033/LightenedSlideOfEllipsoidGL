@@ -27,6 +27,7 @@ private:
     void setXRotateSlider();
     void setYRotateSlider();
     void setZRotateSlider();
+    void createSlider(AbstractSlider*& slider, QBoxLayout* lay, CHANGE_TYPE type);
 
     void setApproximateSlider();
 
