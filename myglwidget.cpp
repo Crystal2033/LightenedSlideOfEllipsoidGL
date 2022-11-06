@@ -13,6 +13,7 @@ void MyGLWidget::initializeGL()
     this->initializeOpenGLFunctions();
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_NORMALIZE);
+    glShadeModel(GL_SMOOTH);
     resizeGL(width(), height());
     qInfo() << "initializeGL";
     reconstructFigure();
@@ -32,7 +33,7 @@ void MyGLWidget::resizeGL(int w, int h)
 void MyGLWidget::paintGL()
 {
     qInfo() << "paintGL";
-    glClearColor(0.39, 0.58, 0.93, 0.2);
+    glClearColor(0.0, 0.0, 0.0, 1);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -55,25 +56,23 @@ void MyGLWidget::makeLighting()
     glEnable(GL_COLOR_MATERIAL);
 
     glPushMatrix();
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-                GLfloat light4_diffuse[] = {1, 1, 1};
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        GLfloat light_position[] = {xPosLight, yPosLight, zPosLight, 1}; //
+        glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
-                GLfloat light4_position[] = {0.0, 0.0, 1.0, 1.0};
+        GLfloat light_color[] = {rLightIntensity, gLightIntensity, bLightIntensity, 1};
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, light_color);
 
-                GLfloat light4_spot_direction[] = {0.0, 0.0, -1.0};
 
-                glEnable(GL_LIGHT0);
+        glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, spotCutOff);
+        glLightf(GL_LIGHT0, GL_SPOT_DIRECTION, spotExponent);
 
-                glLightfv(GL_LIGHT0, GL_DIFFUSE, light4_diffuse);
 
-                glLightfv(GL_LIGHT0, GL_POSITION, light4_position);
-
-                glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 30);
-
-                glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light4_spot_direction);
-
-                glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 15.0);
+        glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, atenuationConstant);
+        glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, atenuationLinear);
+        glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, atenuationQuadratic);
+        //glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
 
     glPopMatrix();
 }
@@ -81,7 +80,6 @@ void MyGLWidget::makeLighting()
 void MyGLWidget::drawLightSquare()
 {
     glEnableClientState(GL_VERTEX_ARRAY);
-        glColor3f(1, 1, 1);
         glVertexPointer(3, GL_FLOAT, 0, squareVertex);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     glDisableClientState(GL_VERTEX_ARRAY);
@@ -98,7 +96,7 @@ void MyGLWidget::makeFigure()
             y = b*sin(i*2*M_PI/valueOfEdges);
             z = 0;
             upperFigurePlane.push_back(glm::vec3(x, y, z));
-            colorsUpper.push_back(glm::vec3(abs(1), abs(0), abs(0)));
+            colorsUpper.push_back(glm::vec3(abs(1), abs(1), abs(1)));
         }
         //NORMALS FOR TOP FLAT
         glm::vec3 vec01Up = upperFigurePlane[1] -upperFigurePlane[0];
@@ -120,7 +118,7 @@ void MyGLWidget::makeFigure()
             z = upperFigurePlane[0].z - 0.25;
 
             middleFigurePlane.push_back(glm::vec3(x, y, z));
-            colorsMiddle.push_back(glm::vec3(abs(0), abs(0), abs(0)));
+            colorsMiddle.push_back(glm::vec3(abs(1), abs(1), abs(1)));
             if(i != 0){
                 upAndMidFlatsFences.push_back(upperFigurePlane[i - 1]);
                 upAndMidFlatsFences.push_back(middleFigurePlane[i - 1]);
@@ -128,10 +126,10 @@ void MyGLWidget::makeFigure()
                 upAndMidFlatsFences.push_back(middleFigurePlane[i]);
                 upAndMidFlatsFences.push_back(upperFigurePlane[i]);
 
-                insertColorInVertexes(upAndMidFlatsColors, 0, 1, 0);
+                insertColorInVertexes(upAndMidFlatsColors, 1, 1, 1);
             }
         }
-        insertColorInVertexes(upAndMidFlatsColors, 0, 1, 0);
+        insertColorInVertexes(upAndMidFlatsColors, 1, 1, 1);
         upAndMidFlatsFences.push_back(upperFigurePlane[valueOfEdges - 1]);
         upAndMidFlatsFences.push_back(middleFigurePlane[valueOfEdges - 1]);
 
@@ -156,11 +154,11 @@ void MyGLWidget::makeFigure()
 
                 midAndBotFlatsFences.push_back(bottomFigurePlane[i]);
                 midAndBotFlatsFences.push_back(middleFigurePlane[i]);
-                insertColorInVertexes(midAndBotFlatsColors, 0, 0, 1);
+                insertColorInVertexes(midAndBotFlatsColors, 1, 1, 1);
             }
         }
 
-        insertColorInVertexes(midAndBotFlatsColors, 0, 0, 1);
+        insertColorInVertexes(midAndBotFlatsColors, 1, 1, 1);
 
         midAndBotFlatsFences.push_back(middleFigurePlane[valueOfEdges - 1]);
         midAndBotFlatsFences.push_back(bottomFigurePlane[valueOfEdges - 1]);
@@ -226,13 +224,13 @@ void MyGLWidget::transformFigure()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    gluLookAt(0, 0, 5, 0, 0, 0, 0, 1, 0);
+    gluLookAt(0, 0, 6, 0, 0, 0, 0, 1, 0);
 
     //glTranslatef(0, 0, -1);
     glRotatef(xRotTheta, 1, 0, 0);
     glRotatef(yRotTheta, 0, 1, 0);
     glRotatef(zRotTheta, 0, 0, 1);
-    glTranslatef(0, 0, 1);
+    //glTranslatef(0, 0, 1);
     makeLighting();
 
 }
@@ -258,9 +256,55 @@ void MyGLWidget::updateObserver(const float value, CHANGE_TYPE changeType)
             reconstructFigure();
             break;
         }
+        case SPOT_CUT_OFF:{
+            spotCutOff = value;
+            break;
+        }
+        case SPOT_EXPONENT:{
+            spotExponent = value;
+            break;
+        }
+        case XLIGHT:{
+             xPosLight = value;
+             break;
+        }
+        case YLIGHT:{
+            yPosLight = value;
+            break;
+        }
+        case ZLIGHT:{
+            zPosLight = value;
+            break;
+        }
+        case RINTENSITY:{
+            rLightIntensity = value/200.0;
+            break;
+        }
+        case GINTENSITY:{
+            gLightIntensity = value/200.0;
+            break;
+        }
+        case BINTENSITY:{
+            bLightIntensity = value/200.0;
+            break;
+        }
+        case ATENUATION_CONST:{
+            atenuationConstant = value/10.0;
+            break;
+        }
+        case ATENUATION_LIN:{
+            atenuationLinear = value/10.0;
+            break;
+        }
+        case ATENUATION_QUAD:{
+            atenuationQuadratic = value/25.0;
+            break;
+        }
+
         default:
             exit(0);
         }
+
     update();
 }
 

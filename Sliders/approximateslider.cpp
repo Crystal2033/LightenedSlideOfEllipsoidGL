@@ -13,22 +13,22 @@ ApproximateSlider::ApproximateSlider()
 
 }
 
-void ApproximateSlider::createSlider(QBoxLayout &layout, CHANGE_TYPE changeType)
+void ApproximateSlider::createSlider(QBoxLayout &layout, CHANGE_TYPE changeType, const int left, const int right, const int curr)
 {
     approxHorLay = new QHBoxLayout();
     this->changeType = changeType;
     approxLabel = new QLabel(getNameByChangeType());
     approxSlider = new QSlider(Qt::Horizontal);
-    approxSlider->setRange(3, 100);
-    approxSlider->setValue(3);
+    approxSlider->setRange(left, right);
+    approxSlider->setValue(curr);
     approxSlider->setTickPosition(QSlider::TicksBelow);
 
     approxNumGadget = new QLCDNumber(this);
-    approxNumGadget->display(approxSlider->minimum());
-    approxNumGadget->setFixedSize(70, 70);
+    approxNumGadget->display(approxSlider->value());
+    approxNumGadget->setFixedSize(65, 65);
 
     approxHorLay->addWidget(approxLabel, 1);
-    approxHorLay->addWidget(approxSlider, 6);
+    approxHorLay->addWidget(approxSlider, 5);
     approxHorLay->addWidget(approxNumGadget, 1);
 
     layout.addLayout(approxHorLay);

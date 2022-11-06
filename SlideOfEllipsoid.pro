@@ -12,6 +12,7 @@ CONFIG += c++11
 
 SOURCES += \
     MyShaderCode.cpp \
+    Sliders/classicslider.cpp \
     Sliders\abstractslider.cpp \
     Sliders\approximateslider.cpp \
     main.cpp \
@@ -20,6 +21,7 @@ SOURCES += \
     Sliders\rotationslider.cpp
 
 HEADERS += \
+    Sliders/classicslider.h \
     Sliders\abstractslider.h \
     Sliders\approximateslider.h \
     mainwindow.h \

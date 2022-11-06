@@ -1,31 +1,33 @@
 /***************************************************************************
  *                                                                         *
- *   Copyright (C) 02.11.2022 by Kulikov Pavel                                 *
+ *   Copyright (C) 06.11.2022 by Kulikov Pavel                                 *
  *                                                                         *
  *   https://github.com/Crystal2033                                        *
  *                                                                         *
  ***************************************************************************/
+#ifndef CLASSICSLIDER_H
+#define CLASSICSLIDER_H
 #include "abstractslider.h"
-
 #include <QLCDNumber>
 #include <QLabel>
-#include <QSlider>
+#include <qslider.h>
 
-class ApproximateSlider : public AbstractSlider
+class ClassicSlider : public AbstractSlider
 {
-
+    Q_OBJECT
 public:
-    ApproximateSlider();
+    ClassicSlider();
     void createSlider(QBoxLayout& layout, CHANGE_TYPE changeType, const int left, const int right, const int curr) override;
-    ~ApproximateSlider() = default;
+    ~ClassicSlider() = default;
 
 private slots:
     void onValueChanged(int val);
 
 private:
-    QLabel* approxLabel = nullptr;
-    QSlider* approxSlider = nullptr;
-    QLCDNumber* approxNumGadget = nullptr;
-    QHBoxLayout* approxHorLay = nullptr;
+    QLabel* classicLabel = nullptr;
+    QSlider* classicSlider = nullptr;
+    QLCDNumber* classicNumGadget = nullptr;
+    QHBoxLayout* classicHorLay = nullptr;
 };
 
+#endif // CLASSICSLIDER_H

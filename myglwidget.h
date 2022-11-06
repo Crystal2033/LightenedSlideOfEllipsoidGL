@@ -26,6 +26,21 @@ private:
     float yRotTheta= 0.0f;
     float zRotTheta= 0.0f;
 
+    float xPosLight = 0.0;
+    float yPosLight = 0.0;
+    float zPosLight = 5.0;
+
+    float rLightIntensity = 1.0;
+    float gLightIntensity = 1.0;
+    float bLightIntensity = 1.0;
+
+    float atenuationConstant = 0.0;
+    float atenuationLinear = 0.0;
+    float atenuationQuadratic = 0.0;
+
+    float spotCutOff = 0.0;
+    float spotExponent = 0.0;
+
     void drawFigure();
     void makeLighting();
     void drawLightSquare();

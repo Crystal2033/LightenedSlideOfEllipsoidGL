@@ -11,7 +11,7 @@ class RotationSlider : public AbstractSlider
     Q_OBJECT
 public:
     RotationSlider() = default;
-    void createSlider(QBoxLayout& layout, CHANGE_TYPE changeType) override;
+    void createSlider(QBoxLayout& layout, CHANGE_TYPE changeType, const int left, const int right, const int curr) override;
     ~RotationSlider() = default;
 
 private slots:

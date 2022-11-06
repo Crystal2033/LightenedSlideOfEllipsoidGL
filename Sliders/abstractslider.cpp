@@ -41,17 +41,49 @@ QString AbstractSlider::getNameByChangeType() const
     switch (changeType)
     {
         case XROT:{
-            return "X";
+            return "X rotation";
         }
         case YROT:{
-            return "Y";
+            return "Y rotation";
         }
         case ZROT:{
-            return "Z";
+            return "Z rotation";
         }
-        case APROX:
-        {
+        case APROX:{
             return "Edges";
+        }
+        case SPOT_CUT_OFF:{
+            return "Cut off";
+        }
+        case SPOT_EXPONENT:{
+            return "Spot exponent";
+        }
+        case XLIGHT:{
+            return "X light";
+        }
+        case YLIGHT:{
+            return "Y light";
+        }
+        case ZLIGHT:{
+            return "Z light";
+        }
+        case RINTENSITY:{
+            return "Red intens";
+        }
+        case GINTENSITY:{
+            return "Green intens";
+        }
+        case BINTENSITY:{
+            return "Blue intens";
+        }
+        case ATENUATION_CONST:{
+            return "Const aten";
+        }
+        case ATENUATION_LIN:{
+            return "Linear aten";
+        }
+        case ATENUATION_QUAD:{
+            return "Quadric aten";
         }
         default:{
            qInfo() << "Unpredictable value";
