@@ -1,7 +1,7 @@
 #include "myglwidget.h"
 #include <fstream>
-extern const char* vertexShaderCode;
-extern const char* fragmentShaderCode;
+float squareVertex[] = {-1, -1, 0, 1, -1, 0, 1, 1, 0, -1, 1, 0};
+float squareColor[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1};
 
 MyGLWidget::MyGLWidget(QWidget* parent)
 {
@@ -12,20 +12,19 @@ void MyGLWidget::initializeGL()
 {
     this->initializeOpenGLFunctions();
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_NORMALIZE);
     resizeGL(width(), height());
     qInfo() << "initializeGL";
     reconstructFigure();
-    installShaders();
 }
 
 void MyGLWidget::resizeGL(int w, int h)
 {
     glViewport(0, 0, w, h);
     qInfo() << "resizeGL";
-    GLfloat aspect = (GLfloat)w / (GLfloat)h; // Compute aspect ratio of window
-    glMatrixMode(GL_PROJECTION); // To operate on the Projection matrix
-    glLoadIdentity(); // Reset
-    //gluPerspective(60.0f, aspect, 0.1f, 100.0f);
+    GLfloat aspect = (GLfloat)w / (GLfloat)h;
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
     gluPerspective(60.0f, aspect, 0.1f, 100.0f);
 
 }
@@ -33,11 +32,9 @@ void MyGLWidget::resizeGL(int w, int h)
 void MyGLWidget::paintGL()
 {
     qInfo() << "paintGL";
-
-    //glLoadIdentity();
     glClearColor(0.39, 0.58, 0.93, 0.2);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     drawFigure();
 
@@ -51,155 +48,174 @@ void MyGLWidget::drawFigure()
     drawDataFromBuffer();
 }
 
+void MyGLWidget::makeLighting()
+{
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_COLOR_MATERIAL);
+
+    glPushMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+                GLfloat light4_diffuse[] = {1, 1, 1};
+
+                GLfloat light4_position[] = {0.0, 0.0, 1.0, 1.0};
+
+                GLfloat light4_spot_direction[] = {0.0, 0.0, -1.0};
+
+                glEnable(GL_LIGHT0);
+
+                glLightfv(GL_LIGHT0, GL_DIFFUSE, light4_diffuse);
+
+                glLightfv(GL_LIGHT0, GL_POSITION, light4_position);
+
+                glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 30);
+
+                glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light4_spot_direction);
+
+                glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 15.0);
+
+    glPopMatrix();
+}
+
+void MyGLWidget::drawLightSquare()
+{
+    glEnableClientState(GL_VERTEX_ARRAY);
+        glColor3f(1, 1, 1);
+        glVertexPointer(3, GL_FLOAT, 0, squareVertex);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    glDisableClientState(GL_VERTEX_ARRAY);
+}
+
 void MyGLWidget::makeFigure()
 {
     float x, y, z;
-    int a = 2;
-    int b = 1;
+        int a = 2;
+        int b = 1;
 
-    for(int i = 0; i < valueOfEdges; i++){
-        x = a*cos(i*2*M_PI/valueOfEdges);
-        y = b*sin(i*2*M_PI/valueOfEdges);
-        z = -1;
-        upperFigurePlane.push_back(x);
-        upperFigurePlane.push_back(y);
-        upperFigurePlane.push_back(z);
-        upperFigurePlane.push_back(abs(x/2));
-        upperFigurePlane.push_back(abs(y/2));
-        upperFigurePlane.push_back(abs(y/2));
-        colorsUpper.push_back(glm::vec3(abs(x), abs(y), abs(y)));
-        indexesUpperPlane.push_back(i);
-    }
-    qInfo() << upperFigurePlane.size();
-    for(int i = 0; i < valueOfEdges; i++){
-        x = 1.2*a*cos(i*2*M_PI/valueOfEdges);
-        y = 1.2*b*sin(i*2*M_PI/valueOfEdges);
-        z = -1.25;
+        for(int i = 0; i < valueOfEdges; i++){
+            x = a*cos(i*2*M_PI/valueOfEdges);
+            y = b*sin(i*2*M_PI/valueOfEdges);
+            z = 0;
+            upperFigurePlane.push_back(glm::vec3(x, y, z));
+            colorsUpper.push_back(glm::vec3(abs(1), abs(0), abs(0)));
+        }
+        //NORMALS FOR TOP FLAT
+        glm::vec3 vec01Up = upperFigurePlane[1] -upperFigurePlane[0];
+        glm::vec3 vec02Up = upperFigurePlane[2] -upperFigurePlane[0];
+        glm::vec3 normalVec = glm::cross(vec01Up, vec02Up);
+        //normalVec = glm::normalize(normalVec);
 
-//        upperFigurePlane.push_back(abs(x));
-//        upperFigurePlane.push_back(abs(y));
-//        upperFigurePlane.push_back(abs(y));
-//        middleFigurePlane.push_back(glm::vec3(x, y, z));
-//        colorsMiddle.push_back(glm::vec3(abs(0.1), abs(0.5), abs(0.3)))
-    }
+        for(int i = 0; i < valueOfEdges; i++){
+            upperFlatNormals.push_back(normalVec);
+        }
 
-//    for(int i = 0; i < valueOfEdges; i++){
-//        x = 1.2*a*cos(i*2*M_PI/valueOfEdges);
-//        y = 1.2*b*sin(i*2*M_PI/valueOfEdges);
-//        z = -1.25;
-//        middleFigurePlane.push_back(glm::vec3(x, y, z));
-//        colorsMiddle.push_back(glm::vec3(abs(0.1), abs(0.5), abs(0.3)));
-//        if(i != 0){
-//            upAndMidFlatsFences.push_back(upperFigurePlane[i - 1]);
-//            upAndMidFlatsFences.push_back(middleFigurePlane[i - 1]);
+        for(int i = 0; i < valueOfEdges; i++){
+            middleFlatNormals.push_back(normalVec);
+        }
 
-//            upAndMidFlatsFences.push_back(middleFigurePlane[i]);
-//            upAndMidFlatsFences.push_back(upperFigurePlane[i]);
+        for(int i = 0; i < valueOfEdges; i++){
+            x = 1.2*a*cos(i*2*M_PI/valueOfEdges);
+            y = 1.2*b*sin(i*2*M_PI/valueOfEdges);
+            z = upperFigurePlane[0].z - 0.25;
 
-//            upAndMidFlatsColors.push_back(glm::vec3(0.5, 0.5, 0.5));
-//            upAndMidFlatsColors.push_back(glm::vec3(0.5, 0.5, 0.5));
-//            upAndMidFlatsColors.push_back(glm::vec3(0.5, 0.5, 0.5));
-//            upAndMidFlatsColors.push_back(glm::vec3(0.5, 0.5, 0.5));
-//        }
-//    }
-//    upAndMidFlatsFences.push_back(upperFigurePlane[0]);
-//    upAndMidFlatsFences.push_back(middleFigurePlane[0]);
+            middleFigurePlane.push_back(glm::vec3(x, y, z));
+            colorsMiddle.push_back(glm::vec3(abs(0), abs(0), abs(0)));
+            if(i != 0){
+                upAndMidFlatsFences.push_back(upperFigurePlane[i - 1]);
+                upAndMidFlatsFences.push_back(middleFigurePlane[i - 1]);
 
-//    upAndMidFlatsFences.push_back(middleFigurePlane[valueOfEdges - 1]);
-//    upAndMidFlatsFences.push_back(upperFigurePlane[valueOfEdges - 1]);
+                upAndMidFlatsFences.push_back(middleFigurePlane[i]);
+                upAndMidFlatsFences.push_back(upperFigurePlane[i]);
 
-//    upAndMidFlatsColors.push_back(glm::vec3(0.5, 0.5, 0.5));
-//    upAndMidFlatsColors.push_back(glm::vec3(0.5, 0.5, 0.5));
-//    upAndMidFlatsColors.push_back(glm::vec3(0.5, 0.5, 0.5));
-//    upAndMidFlatsColors.push_back(glm::vec3(0.5, 0.5, 0.5));
+                insertColorInVertexes(upAndMidFlatsColors, 0, 1, 0);
+            }
+        }
+        insertColorInVertexes(upAndMidFlatsColors, 0, 1, 0);
+        upAndMidFlatsFences.push_back(upperFigurePlane[valueOfEdges - 1]);
+        upAndMidFlatsFences.push_back(middleFigurePlane[valueOfEdges - 1]);
+
+        upAndMidFlatsFences.push_back(middleFigurePlane[0]);
+        upAndMidFlatsFences.push_back(upperFigurePlane[0]);
 
 
-//    //qInfo() << upAndMidFlatsFences.size();
+        //NORMALS FOR UP AND MID FENCES
+        qInfo() << upAndMidFlatsFences.size();
+        for(int i = 0; i < upAndMidFlatsFences.size(); i+=4){
+            countAndInsertNormals(upAndMidFlatsFences, upAndMidFenceNormals, i, 4);
+        }
 
-//    for(int i = 0; i < valueOfEdges; i++){
-//        bottomFigurePlane.push_back(glm::vec3(upperFigurePlane[i].x, upperFigurePlane[i].y, middleFigurePlane[0].z + (middleFigurePlane[0].z- upperFigurePlane[0].z)));
-//        if(i != 0){
-//            midAndBotFlatsFences.push_back(middleFigurePlane[i - 1]);
-//            midAndBotFlatsFences.push_back(bottomFigurePlane[i - 1]);
 
-//            midAndBotFlatsFences.push_back(bottomFigurePlane[i]);
-//            midAndBotFlatsFences.push_back(middleFigurePlane[i]);
-//            midAndBotFlatsColors.push_back(glm::vec3(0.0, 0.0, 0.0));
-//            midAndBotFlatsColors.push_back(glm::vec3(0.0, 0.0, 0.0));
-//            midAndBotFlatsColors.push_back(glm::vec3(0.0, 0.0, 0.0));
-//            midAndBotFlatsColors.push_back(glm::vec3(0.0, 0.0, 0.0));
-//        }
-//    }
-//    midAndBotFlatsFences.push_back(middleFigurePlane[0]);
-//    midAndBotFlatsFences.push_back(bottomFigurePlane[0]);
 
-//    midAndBotFlatsFences.push_back(bottomFigurePlane[valueOfEdges - 1]);
-//    midAndBotFlatsFences.push_back(middleFigurePlane[valueOfEdges - 1]);
-//    midAndBotFlatsColors.push_back(glm::vec3(0.0, 0.0, 0.0));
-//    midAndBotFlatsColors.push_back(glm::vec3(0.0, 0.0, 0.0));
-//    midAndBotFlatsColors.push_back(glm::vec3(0.0, 0.0, 0.0));
-//    midAndBotFlatsColors.push_back(glm::vec3(0.0, 0.0, 0.0));
 
-//    colorsBottom = colorsUpper;
+        for(int i = 0; i < valueOfEdges; i++){
+            bottomFigurePlane.push_back(glm::vec3(upperFigurePlane[i].x, upperFigurePlane[i].y, middleFigurePlane[0].z + (middleFigurePlane[0].z- upperFigurePlane[0].z)));
+            if(i != 0){
+                midAndBotFlatsFences.push_back(middleFigurePlane[i - 1]);
+                midAndBotFlatsFences.push_back(bottomFigurePlane[i - 1]);
+
+                midAndBotFlatsFences.push_back(bottomFigurePlane[i]);
+                midAndBotFlatsFences.push_back(middleFigurePlane[i]);
+                insertColorInVertexes(midAndBotFlatsColors, 0, 0, 1);
+            }
+        }
+
+        insertColorInVertexes(midAndBotFlatsColors, 0, 0, 1);
+
+        midAndBotFlatsFences.push_back(middleFigurePlane[valueOfEdges - 1]);
+        midAndBotFlatsFences.push_back(bottomFigurePlane[valueOfEdges - 1]);
+
+        midAndBotFlatsFences.push_back(bottomFigurePlane[0]);
+        midAndBotFlatsFences.push_back(middleFigurePlane[0]);
+
+
+        //NORMALS FOR BOT FLAT
+        glm::vec3 vec01Bot = bottomFigurePlane[2] -bottomFigurePlane[0];
+        glm::vec3 vec02Bot = bottomFigurePlane[1] -bottomFigurePlane[0];
+        glm::vec3 normalVecBot = glm::cross(vec01Bot, vec02Bot);
+        //normalVecBot = glm::normalize(normalVecBot);
+        for(int i = 0; i < valueOfEdges; i++){
+            bottomFlatNormals.push_back(normalVecBot);
+        }
+
+
+        //NORMALS FOR MID AND BOT FENCES
+        for(int i = 0; i < midAndBotFlatsFences.size(); i+=4){
+            countAndInsertNormals(midAndBotFlatsFences, midAndBotFenceNormals,  i, 4);
+        }
+
+
+        colorsBottom = colorsUpper;
+}
+
+void MyGLWidget::insertDataInBuffer(GLuint* indexBuffer, std::vector<glm::vec3> &data, const int index)
+{
+    glGenBuffers(1, &indexBuffer[index]);
+    glBindBuffer(GL_ARRAY_BUFFER, indexBuffer[index]);
+    glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(glm::vec3), data.data(), GL_DYNAMIC_DRAW);//GL_STREAM_DRAW
 }
 
 void MyGLWidget::insertFigureInBuffer()
 {
-    //UPPER ellipse flat
+        insertDataInBuffer(flatsVBO, upperFigurePlane, 0);
+        insertDataInBuffer(flatsVBO, middleFigurePlane, 1);
+        insertDataInBuffer(flatsVBO, bottomFigurePlane, 2);
 
-    glGenBuffers(1, &flatsVBO[0]);
-    glBindBuffer(GL_ARRAY_BUFFER, flatsVBO[0]);
-    glBufferData(GL_ARRAY_BUFFER, upperFigurePlane.size() * sizeof(float), upperFigurePlane.data(), GL_STATIC_DRAW);//GL_STREAM_DRAW
-    glEnableVertexAttribArray(0); //position
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), 0);
-    glEnableVertexAttribArray(1); //color
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(sizeof(float) * 2));
+        insertDataInBuffer(flatsColor, colorsUpper, 0);
+        insertDataInBuffer(flatsColor, colorsMiddle, 1);
+        insertDataInBuffer(flatsColor, colorsBottom, 2);
 
-//    GLuint indexBufferID;
-//    glGenBuffers(1, &indexBufferID);
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexesUpperPlane.size() * sizeof(unsigned int), indexesUpperPlane.data(), GL_STATIC_DRAW);//GL_STREAM_DRAW
+        insertDataInBuffer(fencesVBO, upAndMidFlatsFences, 0);
+        insertDataInBuffer(fencesVBO, midAndBotFlatsFences, 1);
 
+        insertDataInBuffer(fencesColor, upAndMidFlatsColors, 0);
+        insertDataInBuffer(fencesColor, midAndBotFlatsColors, 1);
 
-//    glGenBuffers(1, flatsColor);
-//    glBindBuffer(GL_ARRAY_BUFFER, flatsColor[0]);
-//    glBufferData(GL_ARRAY_BUFFER, colorsUpper.size() * sizeof(glm::vec3), colorsUpper.data(), GL_STATIC_DRAW);//GL_STREAM_DRAW
-
-//    //MIDDLE ellipse flat
-//    glGenBuffers(1, &flatsVBO[1]);
-//    glBindBuffer(GL_ARRAY_BUFFER, flatsVBO[1]);
-//    glBufferData(GL_ARRAY_BUFFER, middleFigurePlane.size() * sizeof(glm::vec3), middleFigurePlane.data(), GL_STATIC_DRAW);//GL_STREAM_DRAW
-
-//    glGenBuffers(1, &flatsColor[1]);
-//    glBindBuffer(GL_ARRAY_BUFFER, flatsColor[1]);
-//    glBufferData(GL_ARRAY_BUFFER, colorsMiddle.size() * sizeof(glm::vec3), colorsMiddle.data(), GL_STATIC_DRAW);//GL_STREAM_DRAW
-
-//    //BOTTOM ellipse flat
-//    glGenBuffers(1, &flatsVBO[2]);
-//    glBindBuffer(GL_ARRAY_BUFFER, flatsVBO[2]);
-//    glBufferData(GL_ARRAY_BUFFER, bottomFigurePlane.size() * sizeof(glm::vec3), bottomFigurePlane.data(), GL_STATIC_DRAW);//GL_STREAM_DRAW
-
-//    glGenBuffers(1, &flatsColor[2]);
-//    glBindBuffer(GL_ARRAY_BUFFER, flatsColor[2]);
-//    glBufferData(GL_ARRAY_BUFFER, colorsBottom.size() * sizeof(glm::vec3), colorsBottom.data(), GL_STATIC_DRAW);//GL_STREAM_DRAW
-
-//    //UPPER ellipse ring (connecting middle and upper flats)
-//    glGenBuffers(1, &fencesVBO[0]);
-//    glBindBuffer(GL_ARRAY_BUFFER, fencesVBO[0]);
-//    glBufferData(GL_ARRAY_BUFFER, upAndMidFlatsFences.size() * sizeof(glm::vec3), upAndMidFlatsFences.data(), GL_STATIC_DRAW);//GL_STREAM_DRAW
-
-//    glGenBuffers(1, &fencesColor[0]);
-//    glBindBuffer(GL_ARRAY_BUFFER, fencesColor[0]);
-//    glBufferData(GL_ARRAY_BUFFER, upAndMidFlatsColors.size() * sizeof(glm::vec3), upAndMidFlatsColors.data(), GL_STATIC_DRAW);//GL_STREAM_DRAW
-
-//    //BOTTOM ellipse ring (connecting middle and bottom flats)
-//    glGenBuffers(1, &fencesVBO[1]);
-//    glBindBuffer(GL_ARRAY_BUFFER, fencesVBO[1]);
-//    glBufferData(GL_ARRAY_BUFFER, midAndBotFlatsFences.size() * sizeof(glm::vec3), midAndBotFlatsFences.data(), GL_STATIC_DRAW);//GL_STREAM_DRAW
-
-//    glGenBuffers(1, &fencesColor[1]);
-//    glBindBuffer(GL_ARRAY_BUFFER, fencesColor[1]);
-//    glBufferData(GL_ARRAY_BUFFER, midAndBotFlatsColors.size() * sizeof(glm::vec3), midAndBotFlatsColors.data(), GL_STATIC_DRAW);//GL_STREAM_DRAW
+        insertDataInBuffer(normalsVBO, upperFlatNormals, 0);
+        insertDataInBuffer(normalsVBO, middleFlatNormals, 1);
+        insertDataInBuffer(normalsVBO, bottomFlatNormals, 2);
+        insertDataInBuffer(normalsVBO, upAndMidFenceNormals, 3);
+        insertDataInBuffer(normalsVBO, midAndBotFenceNormals, 4);
 
 }
 
@@ -210,13 +226,15 @@ void MyGLWidget::transformFigure()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    gluLookAt(0, -3, 1, 0, 0, -1, 0, 1, 0);
+    gluLookAt(0, 0, 5, 0, 0, 0, 0, 1, 0);
 
-    glTranslatef(0, 0, -1);
+    //glTranslatef(0, 0, -1);
     glRotatef(xRotTheta, 1, 0, 0);
     glRotatef(yRotTheta, 0, 1, 0);
     glRotatef(zRotTheta, 0, 0, 1);
     glTranslatef(0, 0, 1);
+    makeLighting();
+
 }
 
 void MyGLWidget::updateObserver(const float value, CHANGE_TYPE changeType)
@@ -255,59 +273,44 @@ void MyGLWidget::reconstructFigure()
 
 void MyGLWidget::drawDataFromBuffer()
 {
-    glBindBuffer(GL_ARRAY_BUFFER, flatsVBO[0]);
-    glVertexPointer(3, GL_FLOAT, 0, NULL);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-//    glBindBuffer(GL_ARRAY_BUFFER, flatsColor[i]);
-//    glColorPointer(3, GL_FLOAT, 0, NULL);
-//    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    for(int i = 0; i < 3; i++){ //TODO: probably middle flat could be just a empty circle
+        glBindBuffer(GL_ARRAY_BUFFER, flatsVBO[i]);
+        glVertexPointer(3, GL_FLOAT, 0, NULL);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    //glEnableClientState(GL_VERTEX_ARRAY);
-    //glEnableClientState(GL_COLOR_ARRAY);
-    glDrawArrays(GL_POLYGON, 0, valueOfEdges);
-    //glDrawElements(GL_POLYGON, valueOfEdges, GL_UNSIGNED_INT, 0);
-    //glDisableClientState(GL_COLOR_ARRAY);
-    //glDisableClientState(GL_VERTEX_ARRAY);
+        glBindBuffer(GL_ARRAY_BUFFER, flatsColor[i]);
+        glColorPointer(3, GL_FLOAT, 0, NULL);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-//    for(int i = 0; i < 3; i++){ //TODO: probably middle flat could be just a empty circle
-//        glBindBuffer(GL_ARRAY_BUFFER, flatsVBO[i]);
-//        glVertexPointer(3, GL_FLOAT, 0, NULL);
-//        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, normalsVBO[i]);
+        glNormalPointer(GL_FLOAT, 0, NULL);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-//        glBindBuffer(GL_ARRAY_BUFFER, flatsColor[i]);
-//        glColorPointer(3, GL_FLOAT, 0, NULL);
-//        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        drawArrays(GL_TRIANGLE_FAN, 0,valueOfEdges);
+    }
 
-//        glEnableClientState(GL_VERTEX_ARRAY);
-//        glEnableClientState(GL_COLOR_ARRAY);
-//            glDrawArrays(GL_POLYGON, 0, valueOfEdges);
-//        glDisableClientState(GL_COLOR_ARRAY);
-//        glDisableClientState(GL_VERTEX_ARRAY);
-//    }
+    for(int i = 0; i < 2; i++){ //TODO: probably middle flat could be just a empty circle
+        glBindBuffer(GL_ARRAY_BUFFER, fencesVBO[i]);
+        glVertexPointer(3, GL_FLOAT, 0, NULL);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-//    for(int i = 0; i < 2; i++){ //TODO: probably middle flat could be just a empty circle
-//        glBindBuffer(GL_ARRAY_BUFFER, fencesVBO[i]);
-//        glVertexPointer(3, GL_FLOAT, 0, NULL);
-//        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, fencesColor[i]);
+        glColorPointer(3, GL_FLOAT, 0, NULL);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-//        glBindBuffer(GL_ARRAY_BUFFER, fencesColor[i]);
-//        glColorPointer(3, GL_FLOAT, 0, NULL);
-//        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, normalsVBO[i + 3]);
+        glNormalPointer(GL_FLOAT, 0, NULL);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-//        glEnableClientState(GL_VERTEX_ARRAY);
-//        glEnableClientState(GL_COLOR_ARRAY);
-//            glDrawArrays(GL_QUADS, 0, valueOfEdges*4);
-//        glDisableClientState(GL_COLOR_ARRAY);
-//        glDisableClientState(GL_VERTEX_ARRAY);
-//    }
+        drawArrays(GL_QUADS, 0, valueOfEdges * 4);
+    }
 
 }
 
 void MyGLWidget::clearFigure()
 {
     upperFigurePlane.clear();
-    indexesUpperPlane.clear();
     colorsUpper.clear();
 
     middleFigurePlane.clear();
@@ -321,41 +324,41 @@ void MyGLWidget::clearFigure()
 
     midAndBotFlatsFences.clear();
     midAndBotFlatsColors.clear();
+
+    upperFlatNormals.clear();
+    bottomFlatNormals.clear();
+    middleFlatNormals.clear();
+    upAndMidFenceNormals.clear();
+    midAndBotFenceNormals.clear();
 }
 
-//std::string readShaderCode(const char* fileName){
-//    std::ifstream meInput(fileName);
-//    if(!meInput.good()){
-//        qInfo() << "Fail failed to open";
-//        exit(-1);
-//    }
-//    qInfo() << "good";
-//    return std::string(
-//                std::istreambuf_iterator<char>(meInput),
-//                std::istreambuf_iterator<char>()
-//                );
-//}
-
-void MyGLWidget::installShaders()
+void MyGLWidget::drawArrays(GLenum mode, GLint first, GLsizei count)
 {
-   GLuint vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-   GLuint fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-   const char* adapter[1];
 
-   adapter[0] = vertexShaderCode;
-   glShaderSource(vertexShaderID, 1, adapter, 0);
-   adapter[0] = fragmentShaderCode;
-   glShaderSource(fragmentShaderID, 1, adapter, 0);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+        glDrawArrays(mode, first, count);
+    glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+}
 
-   glCompileShader(vertexShaderID);
-   glCompileShader(fragmentShaderID);
+void MyGLWidget::insertColorInVertexes(std::vector<glm::vec3> &colorData, const float r, const float g, const float b)
+{
+    colorData.push_back(glm::vec3(r, g, b));
+    colorData.push_back(glm::vec3(r, g, b));
+    colorData.push_back(glm::vec3(r, g, b));
+    colorData.push_back(glm::vec3(r, g, b));
+}
 
-   GLuint programID = glCreateProgram();
-
-   glAttachShader(programID, vertexShaderID);
-   glAttachShader(programID, fragmentShaderID);
-
-   glLinkProgram(programID);
-
-   glUseProgram(programID);
+void MyGLWidget::countAndInsertNormals(const std::vector<glm::vec3>& fences, std::vector<glm::vec3>& normals, const int i, const int valueOfPush)
+{
+    glm::vec3 vec01 = fences[i+1] -fences[i];
+    glm::vec3 vec02 = fences[i+3] -fences[i];
+    glm::vec3 normalVec = glm::cross(vec01, vec02);
+    //normalVec = glm::normalize(normalVec);
+    for(int j = 0; j < valueOfPush; j++){
+        normals.push_back(normalVec);
+    }
 }
