@@ -1,4 +1,7 @@
 #include "myglwidget.h"
+#include <fstream>
+extern const char* vertexShaderCode;
+extern const char* fragmentShaderCode;
 
 MyGLWidget::MyGLWidget(QWidget* parent)
 {
@@ -12,6 +15,7 @@ void MyGLWidget::initializeGL()
     resizeGL(width(), height());
     qInfo() << "initializeGL";
     reconstructFigure();
+    installShaders();
 }
 
 void MyGLWidget::resizeGL(int w, int h)
@@ -60,9 +64,9 @@ void MyGLWidget::makeFigure()
         upperFigurePlane.push_back(x);
         upperFigurePlane.push_back(y);
         upperFigurePlane.push_back(z);
-        upperFigurePlane.push_back(abs(x));
-        upperFigurePlane.push_back(abs(y));
-        upperFigurePlane.push_back(abs(y));
+        upperFigurePlane.push_back(abs(x/2));
+        upperFigurePlane.push_back(abs(y/2));
+        upperFigurePlane.push_back(abs(y/2));
         colorsUpper.push_back(glm::vec3(abs(x), abs(y), abs(y)));
         indexesUpperPlane.push_back(i);
     }
@@ -319,7 +323,39 @@ void MyGLWidget::clearFigure()
     midAndBotFlatsColors.clear();
 }
 
+//std::string readShaderCode(const char* fileName){
+//    std::ifstream meInput(fileName);
+//    if(!meInput.good()){
+//        qInfo() << "Fail failed to open";
+//        exit(-1);
+//    }
+//    qInfo() << "good";
+//    return std::string(
+//                std::istreambuf_iterator<char>(meInput),
+//                std::istreambuf_iterator<char>()
+//                );
+//}
+
 void MyGLWidget::installShaders()
 {
+   GLuint vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+   GLuint fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+   const char* adapter[1];
 
+   adapter[0] = vertexShaderCode;
+   glShaderSource(vertexShaderID, 1, adapter, 0);
+   adapter[0] = fragmentShaderCode;
+   glShaderSource(fragmentShaderID, 1, adapter, 0);
+
+   glCompileShader(vertexShaderID);
+   glCompileShader(fragmentShaderID);
+
+   GLuint programID = glCreateProgram();
+
+   glAttachShader(programID, vertexShaderID);
+   glAttachShader(programID, fragmentShaderID);
+
+   glLinkProgram(programID);
+
+   glUseProgram(programID);
 }
