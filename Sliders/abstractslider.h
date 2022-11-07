@@ -20,6 +20,7 @@ public:
     void addObserver(InterfaceObserver *observer);
     void removeObserver(InterfaceObserver *observer);
     virtual ~AbstractSlider() = default;
+    int getValue()const;
 
 signals:
 
@@ -29,7 +30,7 @@ protected:
     int value = 0;
     CHANGE_TYPE changeType;
     QList<InterfaceObserver*> observers;
-    int getValue()const;
+
 };
 
 #endif // ABSTRACTSLIDER_H

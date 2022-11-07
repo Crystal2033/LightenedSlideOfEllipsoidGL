@@ -35,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     setLightPositionsSliders();
     setIntensitySliders();
     setAtenuationSliders();
+    sendStartValuesToGLWidget();
 }
 
 void MainWindow::setRotateSliders() {
@@ -68,28 +69,51 @@ void MainWindow::setApproximateSlider(){
 }
 
 void MainWindow::setCutOffSliders(){
-    createSlider(spotCutOff, approxSliderLayAndCutOff, SPOT_CUT_OFF, 0, 180, 0);
+    createSlider(spotCutOff, approxSliderLayAndCutOff, SPOT_CUT_OFF, 0, 180, 180);
     createSlider(spotExponent, approxSliderLayAndCutOff, SPOT_EXPONENT, 0, 180, 0);
 }
 
 void MainWindow::setLightPositionsSliders(){
     createSlider(xLightPos, lightPositionsLay, XLIGHT, -100, 100, 0);
     createSlider(yLightPos, lightPositionsLay, YLIGHT, -100, 100, 0);
-    createSlider(zLightPos, lightPositionsLay, ZLIGHT, -100, 100, 0);
+    createSlider(zLightPos, lightPositionsLay, ZLIGHT, -100, 100, 5);
 }
 
 void MainWindow::setIntensitySliders()
 {
-    createSlider(rIntensity, lightIntensitiesLay, RINTENSITY, 0, 200, 200); //DON`T FORGET TO CHANGE VALUE IN MYGLWIDGET.H IN SWITCH CASE
+    createSlider(rIntensity, lightIntensitiesLay, RINTENSITY, 0, 200, 200);
     createSlider(gIntensity, lightIntensitiesLay, GINTENSITY, 0, 200, 200);
     createSlider(bIntensity, lightIntensitiesLay, BINTENSITY, 0, 200, 200);
 }
 
 void MainWindow::setAtenuationSliders()
 {
-    createSlider(constantAtenuationFactor, atenuationFactorsLay, ATENUATION_CONST, 0, 50, 0);
+    createSlider(constantAtenuationFactor, atenuationFactorsLay, ATENUATION_CONST, 0, 50, 11);
     createSlider(linearAtenuationFactor, atenuationFactorsLay, ATENUATION_LIN, 0, 50, 0);
     createSlider(quadraticAtenuationFactor, atenuationFactorsLay, ATENUATION_QUAD, 0, 50, 0);
+}
+
+void MainWindow::sendStartValuesToGLWidget() const
+{
+    myGLWidget->setSlidersValues(xRotateSlider->getValue(), XROT);
+    myGLWidget->setSlidersValues(yRotateSlider->getValue(), YROT);
+    myGLWidget->setSlidersValues(zRotateSlider->getValue(), ZROT);
+
+    myGLWidget->setSlidersValues(xLightPos->getValue(), XLIGHT);
+    myGLWidget->setSlidersValues(yLightPos->getValue(), YLIGHT);
+    myGLWidget->setSlidersValues(zLightPos->getValue(), ZLIGHT);
+
+    myGLWidget->setSlidersValues(rIntensity->getValue(), RINTENSITY);
+    myGLWidget->setSlidersValues(gIntensity->getValue(), GINTENSITY);
+    myGLWidget->setSlidersValues(bIntensity->getValue(), BINTENSITY);
+
+    myGLWidget->setSlidersValues(spotCutOff->getValue(), SPOT_CUT_OFF);
+    myGLWidget->setSlidersValues(spotExponent->getValue(), SPOT_EXPONENT);
+
+    myGLWidget->setSlidersValues(constantAtenuationFactor->getValue(), ATENUATION_CONST);
+    myGLWidget->setSlidersValues(linearAtenuationFactor->getValue(), ATENUATION_LIN);
+    myGLWidget->setSlidersValues(quadraticAtenuationFactor->getValue(), ATENUATION_QUAD);
+
 }
 
 

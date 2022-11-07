@@ -16,6 +16,7 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
+    void sendStartValuesToGLWidget() const;
     ~MainWindow();
 
 private:
@@ -30,6 +31,7 @@ private:
     void setLightPositionsSliders();
     void setIntensitySliders();
     void setAtenuationSliders();
+
 
     MyGLWidget* myGLWidget = nullptr;
     QVBoxLayout* mainHorLay = nullptr;

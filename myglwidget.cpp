@@ -62,7 +62,7 @@ void MyGLWidget::makeLighting()
         glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
         GLfloat light_color[] = {rLightIntensity, gLightIntensity, bLightIntensity, 1};
-        glLightfv(GL_LIGHT0, GL_DIFFUSE, light_color);
+        glLightfv(GL_LIGHT0, GL_SPECULAR, light_color);
 
 
         glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, spotCutOff);
@@ -109,7 +109,7 @@ void MyGLWidget::makeFigure()
         }
 
         for(int i = 0; i < valueOfEdges; i++){
-            middleFlatNormals.push_back(normalVec);
+            middleFlatNormals.push_back(glm::vec3(0,0,0));
         }
 
         for(int i = 0; i < valueOfEdges; i++){
@@ -405,4 +405,9 @@ void MyGLWidget::countAndInsertNormals(const std::vector<glm::vec3>& fences, std
     for(int j = 0; j < valueOfPush; j++){
         normals.push_back(normalVec);
     }
+}
+
+void MyGLWidget::setSlidersValues(const int value, const CHANGE_TYPE sliderType)
+{
+    updateObserver(value, sliderType);
 }

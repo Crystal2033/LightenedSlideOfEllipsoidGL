@@ -18,6 +18,7 @@ class MyGLWidget : public  QOpenGLWidget, public QOpenGLFunctions, public Interf
 
 public:
     explicit MyGLWidget(QWidget* parent = nullptr);
+    void setSlidersValues(const int value, const CHANGE_TYPE sliderType);
 private:
     void initializeGL() override;
     void resizeGL(int w, int h) override;
@@ -28,11 +29,11 @@ private:
 
     float xPosLight = 0.0;
     float yPosLight = 0.0;
-    float zPosLight = 5.0;
+    float zPosLight = 0.0;
 
-    float rLightIntensity = 1.0;
-    float gLightIntensity = 1.0;
-    float bLightIntensity = 1.0;
+    float rLightIntensity = 0.0;
+    float gLightIntensity = 0.0;
+    float bLightIntensity = 0.0;
 
     float atenuationConstant = 0.0;
     float atenuationLinear = 0.0;
@@ -55,6 +56,7 @@ private:
     //void installShaders();
     void insertColorInVertexes(std::vector<glm::vec3>& colorData, const float r, const float g, const float b);
     void countAndInsertNormals(const std::vector<glm::vec3>& fences, std::vector<glm::vec3>& normals, const int index, const int valueOfPush);
+
 
     std::vector<glm::vec3> upperFigurePlane;
     std::vector<glm::vec3> middleFigurePlane;

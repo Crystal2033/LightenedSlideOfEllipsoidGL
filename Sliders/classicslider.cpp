@@ -15,6 +15,7 @@ ClassicSlider::ClassicSlider()
 
 void ClassicSlider::createSlider(QBoxLayout &layout, CHANGE_TYPE changeType, const int left, const int right, const int curr)
 {
+    value = curr;
     classicHorLay = new QHBoxLayout();
     this->changeType = changeType;
     classicLabel = new QLabel(getNameByChangeType());

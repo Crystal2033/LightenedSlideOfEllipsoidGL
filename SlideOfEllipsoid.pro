@@ -14,20 +14,16 @@ SOURCES += \
     MyShaderCode.cpp \
     Sliders/classicslider.cpp \
     Sliders\abstractslider.cpp \
-    Sliders\approximateslider.cpp \
     main.cpp \
     mainwindow.cpp \
     myglwidget.cpp \
-    Sliders\rotationslider.cpp
 
 HEADERS += \
     Sliders/classicslider.h \
     Sliders\abstractslider.h \
-    Sliders\approximateslider.h \
     mainwindow.h \
     myglwidget.h \
     Patterns\observer.h \
-    Sliders\rotationslider.h \
     Patterns\subject.h
 
 FORMS += \
