@@ -13,6 +13,7 @@ void MyGLWidget::initializeGL()
     this->initializeOpenGLFunctions();
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_NORMALIZE);
+
     glShadeModel(GL_SMOOTH);
     resizeGL(width(), height());
     qInfo() << "initializeGL";
@@ -51,28 +52,37 @@ void MyGLWidget::drawFigure()
 
 void MyGLWidget::makeLighting()
 {
+
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR);
+    float specReflection[] = { 1.f, 1.f, 1.f, 1.0f };
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specReflection);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 56);
 
     glPushMatrix();
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
+
+
         GLfloat light_position[] = {xPosLight, yPosLight, zPosLight, 1}; //
         glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
         GLfloat light_color[] = {rLightIntensity, gLightIntensity, bLightIntensity, 1};
-        glLightfv(GL_LIGHT0, GL_SPECULAR, light_color);
+        GLfloat specular[] = {0, 1, 0, 1};
 
+        //glLightfv(GL_LIGHT0, GL_AMBIENT, light_color);
+        glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, light_color);
 
         glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, spotCutOff);
-        glLightf(GL_LIGHT0, GL_SPOT_DIRECTION, spotExponent);
-
+        glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, spotExponent);
 
         glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, atenuationConstant);
         glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, atenuationLinear);
         glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, atenuationQuadratic);
-        //glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+
 
     glPopMatrix();
 }
@@ -331,7 +341,7 @@ void MyGLWidget::drawDataFromBuffer()
         glNormalPointer(GL_FLOAT, 0, NULL);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-        drawArrays(GL_TRIANGLE_FAN, 0,valueOfEdges);
+        drawArrays(GL_POLYGON, 0,valueOfEdges);
     }
 
     for(int i = 0; i < 2; i++){ //TODO: probably middle flat could be just a empty circle
