@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- *   Copyright (C) 27.10.2022 by Kulikov Pavel                                 *
+ *   Copyright (C) 27.10.2022 by Kulikov Pavel                             *
  *                                                                         *
  *   https://github.com/Crystal2033                                        *
  *                                                                         *

@@ -16,7 +16,7 @@ class ClassicSlider : public AbstractSlider
 {
     Q_OBJECT
 public:
-    ClassicSlider();
+    ClassicSlider() = default;
     void createSlider(QBoxLayout& layout, CHANGE_TYPE changeType, const int left, const int right, const int curr) override;
     ~ClassicSlider() = default;
 

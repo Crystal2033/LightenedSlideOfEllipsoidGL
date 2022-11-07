@@ -48,8 +48,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 }
 
 
-
-
 void MainWindow::createSlider(AbstractSlider *&slider, QBoxLayout *lay, CHANGE_TYPE type, const int left, const int right, const int curr)
 {
     slider = new ClassicSlider();
@@ -70,7 +68,7 @@ void MainWindow::setApproximateAndStretchSlider(){
 }
 
 void MainWindow::setShinessAndCutOffSliders(){
-    createSlider(shiness, shinessAndCuts, SHINESS, 0, 128, 0);
+    createSlider(shiness, shinessAndCuts, SHINESS, 0, 128, 10);
     createSlider(spotCutOff, shinessAndCuts, SPOT_CUT_OFF, 0, 180, 180);
     createSlider(spotExponent, shinessAndCuts, SPOT_EXPONENT, 0, 180, 0);
 }
@@ -128,8 +126,6 @@ void MainWindow::sendStartValuesToGLWidget() const
     myGLWidget->setSlidersValues(quadraticAtenuationFactor->getValue(), ATENUATION_QUAD);
 
 }
-
-
 
 MainWindow::~MainWindow()
 {

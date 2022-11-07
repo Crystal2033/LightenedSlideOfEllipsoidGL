@@ -2,9 +2,7 @@
 #include <fstream>
 
 MyGLWidget::MyGLWidget(QWidget* parent)
-{
-    qInfo()<< "Nice MyGLWidget";
-}
+{}
 
 void MyGLWidget::initializeGL()
 {
@@ -14,14 +12,12 @@ void MyGLWidget::initializeGL()
 
     glShadeModel(GL_SMOOTH);
     resizeGL(width(), height());
-    qInfo() << "initializeGL";
     reconstructFigure();
 }
 
 void MyGLWidget::resizeGL(int w, int h)
 {
     glViewport(0, 0, w, h);
-    qInfo() << "resizeGL";
     GLfloat aspect = (GLfloat)w / (GLfloat)h;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -31,7 +27,6 @@ void MyGLWidget::resizeGL(int w, int h)
 
 void MyGLWidget::paintGL()
 {
-    qInfo() << "paintGL";
     glClearColor(0.0, 0.0, 0.0, 1);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -98,7 +93,6 @@ void MyGLWidget::makeFigure()
         glm::vec3 vec01Up = upperFigurePlane[1] -upperFigurePlane[0];
         glm::vec3 vec02Up = upperFigurePlane[2] -upperFigurePlane[0];
         glm::vec3 normalVec = glm::cross(vec01Up, vec02Up);
-        //normalVec = glm::normalize(normalVec);
 
         for(int i = 0; i < valueOfEdges; i++){
             upperFlatNormals.push_back(normalVec);
@@ -134,7 +128,6 @@ void MyGLWidget::makeFigure()
 
 
         //NORMALS FOR UP AND MID FENCES
-        qInfo() << upAndMidFlatsFences.size();
         for(int i = 0; i < upAndMidFlatsFences.size(); i+=4){
             countAndInsertNormals(upAndMidFlatsFences, upAndMidFenceNormals, i, 4);
         }
@@ -167,7 +160,6 @@ void MyGLWidget::makeFigure()
         glm::vec3 vec01Bot = bottomFigurePlane[2] -bottomFigurePlane[0];
         glm::vec3 vec02Bot = bottomFigurePlane[1] -bottomFigurePlane[0];
         glm::vec3 normalVecBot = glm::cross(vec01Bot, vec02Bot);
-        //normalVecBot = glm::normalize(normalVecBot);
         for(int i = 0; i < valueOfEdges; i++){
             bottomFlatNormals.push_back(normalVecBot);
         }
@@ -346,7 +338,7 @@ void MyGLWidget::reconstructFigure()
 void MyGLWidget::drawDataFromBuffer()
 {
 
-    for(int i = 0; i < 3; i++){ //TODO: probably middle flat could be just a empty circle
+    for(int i = 0; i < 3; i++){
         glBindBuffer(GL_ARRAY_BUFFER, flatsVBO[i]);
         glVertexPointer(3, GL_FLOAT, 0, NULL);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -362,7 +354,7 @@ void MyGLWidget::drawDataFromBuffer()
         drawArrays(GL_POLYGON, 0,valueOfEdges);
     }
 
-    for(int i = 0; i < 2; i++){ //TODO: probably middle flat could be just a empty circle
+    for(int i = 0; i < 2; i++){
         glBindBuffer(GL_ARRAY_BUFFER, fencesVBO[i]);
         glVertexPointer(3, GL_FLOAT, 0, NULL);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -429,7 +421,6 @@ void MyGLWidget::countAndInsertNormals(const std::vector<glm::vec3>& fences, std
     glm::vec3 vec01 = fences[i+1] -fences[i];
     glm::vec3 vec02 = fences[i+3] -fences[i];
     glm::vec3 normalVec = glm::cross(vec01, vec02);
-    //normalVec = glm::normalize(normalVec);
     for(int j = 0; j < valueOfPush; j++){
         normals.push_back(normalVec);
     }
