@@ -25,8 +25,9 @@ void ClassicSlider::createSlider(QBoxLayout &layout, CHANGE_TYPE changeType, con
     classicSlider->setTickPosition(QSlider::TicksBelow);
 
     classicNumGadget = new QLCDNumber(this);
+    classicNumGadget->setSegmentStyle(QLCDNumber::SegmentStyle::Flat);
     classicNumGadget->display(classicSlider->value());
-    classicNumGadget->setFixedSize(65, 65);
+    classicNumGadget->setFixedSize(50, 50);
 
     classicHorLay->addWidget(classicLabel, 1);
     classicHorLay->addWidget(classicSlider, 5);

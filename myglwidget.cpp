@@ -1,7 +1,5 @@
 #include "myglwidget.h"
 #include <fstream>
-float squareVertex[] = {-1, -1, 0, 1, -1, 0, 1, 1, 0, -1, 1, 0};
-float squareColor[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1};
 
 MyGLWidget::MyGLWidget(QWidget* parent)
 {
@@ -52,29 +50,26 @@ void MyGLWidget::drawFigure()
 
 void MyGLWidget::makeLighting()
 {
-
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_COLOR_MATERIAL);
+
     glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR);
-    float specReflection[] = { 1.f, 1.f, 1.f, 1.0f };
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specReflection);
-    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 56);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shiness);
 
     glPushMatrix();
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
+        GLfloat lightPosition[] = {xPosLight, yPosLight, zPosLight, 1};
+        GLfloat lightColor[] = {rLightIntensity, gLightIntensity, bLightIntensity, 1};
+        GLfloat specular[] = {rSpecular, gSpecular, bSpecular, 1};
 
-        GLfloat light_position[] = {xPosLight, yPosLight, zPosLight, 1}; //
-        glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
-        GLfloat light_color[] = {rLightIntensity, gLightIntensity, bLightIntensity, 1};
-        GLfloat specular[] = {0, 1, 0, 1};
+        glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 
-        //glLightfv(GL_LIGHT0, GL_AMBIENT, light_color);
         glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
-        glLightfv(GL_LIGHT0, GL_DIFFUSE, light_color);
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor);
 
         glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, spotCutOff);
         glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, spotExponent);
@@ -83,27 +78,18 @@ void MyGLWidget::makeLighting()
         glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, atenuationLinear);
         glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, atenuationQuadratic);
 
-
     glPopMatrix();
 }
 
-void MyGLWidget::drawLightSquare()
-{
-    glEnableClientState(GL_VERTEX_ARRAY);
-        glVertexPointer(3, GL_FLOAT, 0, squareVertex);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-    glDisableClientState(GL_VERTEX_ARRAY);
-}
+
 
 void MyGLWidget::makeFigure()
 {
     float x, y, z;
-        int a = 2;
-        int b = 1;
 
         for(int i = 0; i < valueOfEdges; i++){
-            x = a*cos(i*2*M_PI/valueOfEdges);
-            y = b*sin(i*2*M_PI/valueOfEdges);
+            x = xStretch*cos(i*2*M_PI/valueOfEdges);
+            y = yStretch*sin(i*2*M_PI/valueOfEdges);
             z = 0;
             upperFigurePlane.push_back(glm::vec3(x, y, z));
             colorsUpper.push_back(glm::vec3(abs(1), abs(1), abs(1)));
@@ -123,8 +109,8 @@ void MyGLWidget::makeFigure()
         }
 
         for(int i = 0; i < valueOfEdges; i++){
-            x = 1.2*a*cos(i*2*M_PI/valueOfEdges);
-            y = 1.2*b*sin(i*2*M_PI/valueOfEdges);
+            x = 1.2*xStretch*cos(i*2*M_PI/valueOfEdges);
+            y = 1.2*yStretch*sin(i*2*M_PI/valueOfEdges);
             z = upperFigurePlane[0].z - 0.25;
 
             middleFigurePlane.push_back(glm::vec3(x, y, z));
@@ -261,11 +247,23 @@ void MyGLWidget::updateObserver(const float value, CHANGE_TYPE changeType)
             zRotTheta = value;
             break;
         }
+
         case APROX: {
             valueOfEdges = value;
             reconstructFigure();
             break;
         }
+        case XSTRETCH: {
+            xStretch = value / 5.0;
+            reconstructFigure();
+            break;
+        }
+        case YSTRETCH: {
+            yStretch = value / 5.0;
+            reconstructFigure();
+            break;
+        }
+
         case SPOT_CUT_OFF:{
             spotCutOff = value;
             break;
@@ -274,6 +272,11 @@ void MyGLWidget::updateObserver(const float value, CHANGE_TYPE changeType)
             spotExponent = value;
             break;
         }
+        case SHINESS:{
+            shiness = value;
+            break;
+        }
+
         case XLIGHT:{
              xPosLight = value;
              break;
@@ -286,6 +289,7 @@ void MyGLWidget::updateObserver(const float value, CHANGE_TYPE changeType)
             zPosLight = value;
             break;
         }
+
         case RINTENSITY:{
             rLightIntensity = value/200.0;
             break;
@@ -298,6 +302,20 @@ void MyGLWidget::updateObserver(const float value, CHANGE_TYPE changeType)
             bLightIntensity = value/200.0;
             break;
         }
+
+        case RSPECULAR:{
+            rSpecular = value/200.0;
+            break;
+        }
+        case GSPECULAR:{
+            gSpecular = value/200.0;
+            break;
+        }
+        case BSPECULAR:{
+            bSpecular = value/200.0;
+            break;
+        }
+
         case ATENUATION_CONST:{
             atenuationConstant = value/10.0;
             break;

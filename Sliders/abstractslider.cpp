@@ -49,15 +49,27 @@ QString AbstractSlider::getNameByChangeType() const
         case ZROT:{
             return "Z rotation";
         }
+
         case APROX:{
             return "Edges";
         }
+        case XSTRETCH:{
+            return "X stretch";
+        }
+        case YSTRETCH:{
+            return "Y stretch";
+        }
+
         case SPOT_CUT_OFF:{
             return "Cut off";
         }
         case SPOT_EXPONENT:{
             return "Spot exponent";
         }
+        case SHINESS:{
+            return "Shiness";
+        }
+
         case XLIGHT:{
             return "X light";
         }
@@ -67,6 +79,7 @@ QString AbstractSlider::getNameByChangeType() const
         case ZLIGHT:{
             return "Z light";
         }
+
         case RINTENSITY:{
             return "Red intens";
         }
@@ -76,6 +89,17 @@ QString AbstractSlider::getNameByChangeType() const
         case BINTENSITY:{
             return "Blue intens";
         }
+
+        case RSPECULAR:{
+            return "Red specular";
+        }
+        case GSPECULAR:{
+            return "Green specular";
+        }
+        case BSPECULAR:{
+            return "Blue specular";
+        }
+
         case ATENUATION_CONST:{
             return "Const aten";
         }

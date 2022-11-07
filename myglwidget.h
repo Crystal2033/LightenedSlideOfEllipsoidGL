@@ -23,6 +23,11 @@ private:
     void initializeGL() override;
     void resizeGL(int w, int h) override;
     void paintGL() override;
+
+    int valueOfEdges = 3;
+    float xStretch = 2.0f;
+    float yStretch = 1.0f;
+
     float xRotTheta = 0.0f;
     float yRotTheta= 0.0f;
     float zRotTheta= 0.0f;
@@ -42,18 +47,25 @@ private:
     float spotCutOff = 0.0;
     float spotExponent = 0.0;
 
+    float rSpecular = 0.0;
+    float gSpecular = 0.0;
+    float bSpecular = 0.0;
+
+    int shiness = 0;
+
     void drawFigure();
     void makeLighting();
-    void drawLightSquare();
     void makeFigure();
+
     void insertDataInBuffer(GLuint* indexBuffer, std::vector<glm::vec3>& data, const int index);
     void insertFigureInBuffer();
+
     void transformFigure();
     void reconstructFigure();
     void drawDataFromBuffer();
+
     void clearFigure();
     void drawArrays(GLenum mode, GLint first, GLsizei count);
-    //void installShaders();
     void insertColorInVertexes(std::vector<glm::vec3>& colorData, const float r, const float g, const float b);
     void countAndInsertNormals(const std::vector<glm::vec3>& fences, std::vector<glm::vec3>& normals, const int index, const int valueOfPush);
 
@@ -78,7 +90,6 @@ private:
     std::vector<glm::vec3> upAndMidFenceNormals;
     std::vector<glm::vec3> midAndBotFenceNormals;
 
-    int valueOfEdges = 3;
     GLuint flatsVBO[3];
     GLuint flatsColor[3];
 

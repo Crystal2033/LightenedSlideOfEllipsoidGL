@@ -20,17 +20,18 @@ public:
     ~MainWindow();
 
 private:
-    void setRotateSliders();
-    void setXRotateSlider();
-    void setYRotateSlider();
-    void setZRotateSlider();
     void createSlider(AbstractSlider*& slider, QBoxLayout* lay, CHANGE_TYPE type, const int left, const int right, const int curr);
 
-    void setApproximateSlider();
-    void setCutOffSliders();
+    void setRotateSliders();
+
+    void setApproximateAndStretchSlider();
+
     void setLightPositionsSliders();
     void setIntensitySliders();
     void setAtenuationSliders();
+
+    void setSpecularColors();
+    void setShinessAndCutOffSliders();
 
 
     MyGLWidget* myGLWidget = nullptr;
@@ -39,11 +40,15 @@ private:
 
     QHBoxLayout* rotationSlidersLay = nullptr;
 
-    QHBoxLayout* approxSliderLayAndCutOff = nullptr;
+    QHBoxLayout* ellipsoidFormSlidersLay = nullptr;
 
     QHBoxLayout* lightPositionsLay = nullptr;
 
     QHBoxLayout* lightIntensitiesLay = nullptr;
+
+    QHBoxLayout* shinessAndCuts = nullptr;
+
+    QHBoxLayout* specularColorsLay = nullptr;
 
     QHBoxLayout* atenuationFactorsLay = nullptr;
 
@@ -52,7 +57,10 @@ private:
     AbstractSlider* xRotateSlider = nullptr;
     AbstractSlider* yRotateSlider = nullptr;
     AbstractSlider* zRotateSlider = nullptr;
+
     AbstractSlider* approximateSlider = nullptr;
+    AbstractSlider* xEllipsoidStretch = nullptr;
+    AbstractSlider* yEllipsoidStretch = nullptr;
 
 
     AbstractSlider* xLightPos = nullptr;
@@ -65,11 +73,13 @@ private:
 
     AbstractSlider* spotCutOff = nullptr;
     AbstractSlider* spotExponent = nullptr;
+    AbstractSlider* shiness = nullptr;
+
+    AbstractSlider* rSpecularColor = nullptr;
+    AbstractSlider* gSpecularColor = nullptr;
+    AbstractSlider* bSpecularColor = nullptr;
 
     AbstractSlider* constantAtenuationFactor = nullptr;
     AbstractSlider* linearAtenuationFactor = nullptr;
     AbstractSlider* quadraticAtenuationFactor = nullptr;
-
-
-
 };
