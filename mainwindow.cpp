@@ -244,7 +244,6 @@ void MainWindow::setNewPositionOnLabel()
     stringPosition += QString::number(currPos.y);
     stringPosition += "                                      zPos: ";
     stringPosition += QString::number(currPos.z);
-    qInfo() << stringPosition;
     positionLabel.setStyleSheet("color: white;"
                                 "font-weight: bold;"
                                 "font-family: \"Times New Roman\", Times, serif;"
@@ -257,7 +256,6 @@ void MainWindow::rgbIntensiveAnimation()
 
     if(!rIntensCheckBox->isChecked() && !gIntensCheckBox->isChecked() && !bIntensCheckBox->isChecked()){
         rgbIntensiveTimer->stop();
-        qInfo() << "STOP";
         return;
     }
 
