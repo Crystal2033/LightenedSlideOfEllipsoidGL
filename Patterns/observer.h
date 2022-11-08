@@ -24,5 +24,5 @@ public:
     virtual void updateObserver(const float value, CHANGE_TYPE changeType) = 0;
 };
 
-#endif // OBSERVER_H
+#endif
 

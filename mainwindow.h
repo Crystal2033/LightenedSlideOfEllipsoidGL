@@ -20,6 +20,8 @@ public:
     ~MainWindow();
 
 private:
+    void keyPressEvent(QKeyEvent *ev) override;
+
     void createSlider(AbstractSlider*& slider, QBoxLayout* lay, CHANGE_TYPE type, const int left, const int right, const int curr);
 
     void setRotateSliders();

@@ -13,17 +13,21 @@ CONFIG += c++11
 SOURCES += \
     Sliders/classicslider.cpp \
     Sliders\abstractslider.cpp \
+    camera.cpp \
     main.cpp \
     mainwindow.cpp \
-    myglwidget.cpp
+    myglwidget.cpp \
+    slidedellipsoid.cpp
 
 HEADERS += \
     Sliders/classicslider.h \
     Sliders\abstractslider.h \
+    camera.h \
     mainwindow.h \
     myglwidget.h \
     Patterns\observer.h \
-    Patterns\subject.h
+    Patterns\subject.h \
+    slidedellipsoid.h
 
 FORMS += \
     mainwindow.ui
@@ -34,3 +38,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES +=
+
+RESOURCES += \
+    resources.qrc

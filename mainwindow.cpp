@@ -8,6 +8,9 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setWindowTitle("Crystal3D");
+    this->setWindowIcon(QIcon(":/Pics/Crystal.png"));
+
     mainHorLay = new QVBoxLayout();
     menuVertLayout = new QVBoxLayout();
 
@@ -68,7 +71,7 @@ void MainWindow::setApproximateAndStretchSlider(){
 }
 
 void MainWindow::setShinessAndCutOffSliders(){
-    createSlider(shiness, shinessAndCuts, SHINESS, 0, 128, 10);
+    createSlider(shiness, shinessAndCuts, SHINESS, 0, 128, 25);
     createSlider(spotCutOff, shinessAndCuts, SPOT_CUT_OFF, 0, 180, 180);
     createSlider(spotExponent, shinessAndCuts, SPOT_EXPONENT, 0, 180, 0);
 }
@@ -87,16 +90,16 @@ void MainWindow::setIntensitySliders(){
 
 void MainWindow::setAtenuationSliders()
 {
-    createSlider(constantAtenuationFactor, atenuationFactorsLay, ATENUATION_CONST, 0, 50, 11);
+    createSlider(constantAtenuationFactor, atenuationFactorsLay, ATENUATION_CONST, 0, 50, 20);
     createSlider(linearAtenuationFactor, atenuationFactorsLay, ATENUATION_LIN, 0, 50, 0);
     createSlider(quadraticAtenuationFactor, atenuationFactorsLay, ATENUATION_QUAD, 0, 50, 0);
 }
 
 void MainWindow::setSpecularColors()
 {
-    createSlider(rSpecularColor, specularColorsLay, RSPECULAR ,0, 200, 0);
-    createSlider(gSpecularColor, specularColorsLay, GSPECULAR ,0, 200, 100);
-    createSlider(bSpecularColor, specularColorsLay, BSPECULAR ,0, 200, 100);
+    createSlider(rSpecularColor, specularColorsLay, RSPECULAR ,0, 200, 200);
+    createSlider(gSpecularColor, specularColorsLay, GSPECULAR ,0, 200, 200);
+    createSlider(bSpecularColor, specularColorsLay, BSPECULAR ,0, 200, 200);
 }
 
 void MainWindow::sendStartValuesToGLWidget() const
@@ -131,4 +134,10 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void MainWindow::keyPressEvent(QKeyEvent *ev)
+{
+    myGLWidget->getKeyBoardEvent(ev);
+}
+
 
