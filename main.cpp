@@ -5,7 +5,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
-    w.resize(960, 600);
+    w.setWindowState(Qt::WindowMaximized);
     w.show();
     return a.exec();
 }
