@@ -86,6 +86,17 @@ void MainWindow::createGroupBox(QGroupBox *groupBox, QBoxLayout *lay, QString gr
 {
     groupBox = new QGroupBox(groupName);
     groupBox->setLayout(lay);
+    groupBox->setStyleSheet("QGroupBox:title {"
+                            "color: white;"
+                            ""
+                            "}"
+                            "QGroupBox > *{"
+                            "background-color: rgb(48, 107, 103);"
+                            "}"
+                            "QGroupBox{"
+                            "background-color: rgb(48, 107, 103);"
+                            "}"
+                            "");
 
     if(lay->expandingDirections() == Qt::Orientation::Vertical){
         lightingLayout->addWidget(groupBox, 1);
@@ -127,14 +138,26 @@ void MainWindow::setIntensitySliders(Qt::Orientation sliderOrientation){
     lightIntensitiesLay = new QHBoxLayout();
     QBoxLayout* sliderLay = createSlider(rIntensitySlider, sliderOrientation, lightIntensitiesLay, RINTENSITY, 0, 200, 200);
     rIntensCheckBox = new QCheckBox("Animate");
+    rIntensCheckBox->setStyleSheet("color: white;"
+                                   "font-weight: bold;"
+                                   "font-family: \"Times New Roman\", Times, serif;"
+                                   "font-size: 15px;");
     sliderLay->addWidget(rIntensCheckBox, 1, Qt::AlignLeft);
 
     sliderLay = createSlider(gIntensitySlider, sliderOrientation, lightIntensitiesLay, GINTENSITY, 0, 200, 200);
     gIntensCheckBox = new QCheckBox("Animate");
+    gIntensCheckBox->setStyleSheet("color: white;"
+                                   "font-weight: bold;"
+                                   "font-family: \"Times New Roman\", Times, serif;"
+                                   "font-size: 15px;");
     sliderLay->addWidget(gIntensCheckBox, 1, Qt::AlignLeft);
 
     sliderLay = createSlider(bIntensitySlider, sliderOrientation, lightIntensitiesLay, BINTENSITY, 0, 200, 200);
     bIntensCheckBox = new QCheckBox("Animate");
+    bIntensCheckBox->setStyleSheet("color: white;"
+                                   "font-weight: bold;"
+                                   "font-family: \"Times New Roman\", Times, serif;"
+                                   "font-size: 15px;");
     sliderLay->addWidget(bIntensCheckBox, 1, Qt::AlignLeft);
 
     createGroupBox(lightIntensivityGroup, lightIntensitiesLay, QString("Light intensivity"));
@@ -217,11 +240,15 @@ void MainWindow::setNewPositionOnLabel()
     QString stringPosition = "xPos: ";
     glm::vec3 currPos = myGLWidget->getCurrPosInWorld();
     stringPosition += QString::number(currPos.x);
-    stringPosition += " yPos: ";
+    stringPosition += "                                      yPos: ";
     stringPosition += QString::number(currPos.y);
-    stringPosition += " zPos: ";
+    stringPosition += "                                      zPos: ";
     stringPosition += QString::number(currPos.z);
     qInfo() << stringPosition;
+    positionLabel.setStyleSheet("color: white;"
+                                "font-weight: bold;"
+                                "font-family: \"Times New Roman\", Times, serif;"
+                                "font-size: 20px;");
     positionLabel.setText(stringPosition);
 }
 

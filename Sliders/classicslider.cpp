@@ -7,6 +7,8 @@
  ***************************************************************************/
 #include "classicslider.h"
 
+#include <QPalette>
+
 void ClassicSlider::setValue(int value)
 {
     AbstractSlider::setValue(value);
@@ -32,6 +34,7 @@ QBoxLayout* ClassicSlider::createSlider(QBoxLayout &layout, Qt::Orientation slid
     classicNumGadget = new QLCDNumber(this);
     classicNumGadget->setSegmentStyle(QLCDNumber::SegmentStyle::Flat);
     classicNumGadget->display(classicSlider->value());
+    setStyles();
 
 
     if(sliderOrientation == Qt::Horizontal){
@@ -58,4 +61,25 @@ void ClassicSlider::onValueChanged(int val)
     value = val;
     classicNumGadget->display(value);
     notifyObservers();
+}
+
+void ClassicSlider::setStyles()
+{
+    classicNumGadget->setStyleSheet("QLCDNumber{"
+                                    "background-color: rgb(77, 138, 113);"
+                                    "border-radius: 5px;"
+                                    "}"
+                                    ""
+                                    "");
+    classicLabel->setStyleSheet("color:rgb(204, 230, 228);"
+                                "font-weight: bold;"
+                                "font-family: \"Times New Roman\", Times, serif;"
+                                "font-size: 15px;"
+                                "");
+    classicSlider->setStyleSheet("QSlider::handle{"
+                                 "background-color:white;"
+                                 "}"
+                                 ""
+                                 ""
+                                 "");
 }

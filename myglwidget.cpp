@@ -29,7 +29,7 @@ void MyGLWidget::resizeGL(int w, int h)
 
 void MyGLWidget::paintGL()
 {
-    glClearColor(0.0, 0.0, 0.0, 1);
+    glClearColor(0.109, 0.105, 0.129, 1);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

@@ -25,6 +25,7 @@ private slots:
     void onValueChanged(int val);
 
 private:
+    void setStyles();
     QLabel* classicLabel = nullptr;
     QSlider* classicSlider = nullptr;
     QLCDNumber* classicNumGadget = nullptr;
