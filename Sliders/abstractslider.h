@@ -20,8 +20,8 @@ public:
     void addObserver(InterfaceObserver *observer);
     void removeObserver(InterfaceObserver *observer);
     virtual ~AbstractSlider() = default;
-    int getValue()const;
-    void setValue(int value);
+    int getValue() const;
+    virtual void setValue(int value);
 
 signals:
 

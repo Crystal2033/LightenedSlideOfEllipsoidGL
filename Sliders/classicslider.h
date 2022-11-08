@@ -17,6 +17,7 @@ class ClassicSlider : public AbstractSlider
     Q_OBJECT
 public:
     ClassicSlider() = default;
+    void setValue(int value) override;
     QBoxLayout* createSlider(QBoxLayout& layout, Qt::Orientation sliderOrientation, CHANGE_TYPE changeType, const int left, const int right, const int curr) override;
     ~ClassicSlider() = default;
 

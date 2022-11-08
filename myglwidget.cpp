@@ -149,12 +149,12 @@ void MyGLWidget::updateObserver(const float value, CHANGE_TYPE changeType)
             break;
         }
         case XSTRETCH: {
-            ellipsoid->xStretch = value / 5.0;
+            ellipsoid->xStretch = value / STRETCH_DENUM;
             reconstructFigure();
             break;
         }
         case YSTRETCH: {
-            ellipsoid->yStretch = value / 5.0;
+            ellipsoid->yStretch = value / STRETCH_DENUM;
             reconstructFigure();
             break;
         }
@@ -186,41 +186,41 @@ void MyGLWidget::updateObserver(const float value, CHANGE_TYPE changeType)
         }
 
         case RINTENSITY:{
-            rLightIntensity = value/200.0;
+            rLightIntensity = value/INTENSITY_DENUM;
             break;
         }
         case GINTENSITY:{
-            gLightIntensity = value/200.0;
+            gLightIntensity = value/INTENSITY_DENUM;
             break;
         }
         case BINTENSITY:{
-            bLightIntensity = value/200.0;
+            bLightIntensity = value/INTENSITY_DENUM;
             break;
         }
 
         case RSPECULAR:{
-            rSpecular = value/200.0;
+            rSpecular = value/SPECULAR_DENUM;
             break;
         }
         case GSPECULAR:{
-            gSpecular = value/200.0;
+            gSpecular = value/SPECULAR_DENUM;
             break;
         }
         case BSPECULAR:{
-            bSpecular = value/200.0;
+            bSpecular = value/SPECULAR_DENUM;
             break;
         }
 
         case ATENUATION_CONST:{
-            atenuationConstant = value/10.0;
+            atenuationConstant = value/LIN_AND_CONST_ATEN_DENUM;
             break;
         }
         case ATENUATION_LIN:{
-            atenuationLinear = value/10.0;
+            atenuationLinear = value/LIN_AND_CONST_ATEN_DENUM;
             break;
         }
         case ATENUATION_QUAD:{
-            atenuationQuadratic = value/25.0;
+            atenuationQuadratic = value/QUADRATIC_ATEN_DENUM;
             break;
         }
 
@@ -234,6 +234,11 @@ void MyGLWidget::updateObserver(const float value, CHANGE_TYPE changeType)
 void MyGLWidget::getKeyBoardEvent(QKeyEvent *event)
 {
     keyPressEvent(event);
+}
+
+glm::vec3 MyGLWidget::getCurrPosInWorld() const
+{
+    return glm::vec3(xCameraPos, yCameraPos, zCameraPos);
 }
 
 

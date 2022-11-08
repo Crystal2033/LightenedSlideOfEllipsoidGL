@@ -125,4 +125,5 @@ int AbstractSlider::getValue() const
 void AbstractSlider::setValue(int value)
 {
     this->value = value;
+    notifyObservers();
 }

@@ -16,6 +16,11 @@
 #include "slidedellipsoid.h"
 #include <QKeyEvent>
 #include <QWheelEvent>
+#define INTENSITY_DENUM 200.0
+#define SPECULAR_DENUM 200.0
+#define LIN_AND_CONST_ATEN_DENUM 10.0
+#define QUADRATIC_ATEN_DENUM 10.0
+#define STRETCH_DENUM 5.0
 
 
 class MyGLWidget : public  QOpenGLWidget, public QOpenGLFunctions, public InterfaceObserver{
@@ -24,6 +29,7 @@ public:
     void setSlidersValues(const int value, const CHANGE_TYPE sliderType);
     void updateObserver(const float value, CHANGE_TYPE changeType) override;
     void getKeyBoardEvent(QKeyEvent* event);
+    glm::vec3 getCurrPosInWorld() const;
 
     ~MyGLWidget();
 private:

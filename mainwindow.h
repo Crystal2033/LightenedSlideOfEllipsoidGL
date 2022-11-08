@@ -8,6 +8,8 @@
 #include "Sliders/abstractslider.h"
 #include <QGroupBox>
 #include <QCheckBox>
+#include <QTimer>
+#include <QLabel>
 
 namespace Ui { class MainWindow; }
 
@@ -21,6 +23,9 @@ public:
     void sendStartValuesToGLWidget() const;
     ~MainWindow();
 
+private slots:
+    void rgbIntensiveAnimation();
+    void checkBoxStateChanged();
 private:
     void keyPressEvent(QKeyEvent *ev) override;
 
@@ -40,11 +45,16 @@ private:
     void createGroupBox(QGroupBox* groupBox, QBoxLayout* lay, QString groupName);
     void setSliders();
 
+    int getNewIntensityForAnimation(const AbstractSlider* slider, int* delta);
+    void setNewPositionOnLabel();
+    QLabel positionLabel;
+
     MyGLWidget* myGLWidget = nullptr;
     QVBoxLayout* mainVertLay = nullptr;
 
     QVBoxLayout* menuVertLayout = nullptr;
     QHBoxLayout* menuHorLayout = nullptr;
+    QVBoxLayout* glWidgetAndLabelsLay = nullptr;
 
     QGroupBox* rotationGroup;
     QBoxLayout* rotationSlidersLay = nullptr;
@@ -78,31 +88,35 @@ private:
     AbstractSlider* zRotateSlider = nullptr;
 
     AbstractSlider* approximateSlider = nullptr;
-    AbstractSlider* xEllipsoidStretch = nullptr;
-    AbstractSlider* yEllipsoidStretch = nullptr;
+    AbstractSlider* xEllipsoidStretchSlider = nullptr;
+    AbstractSlider* yEllipsoidStretchSlider = nullptr;
 
 
-    AbstractSlider* xLightPos = nullptr;
-    AbstractSlider* yLightPos = nullptr;
-    AbstractSlider* zLightPos = nullptr;
+    AbstractSlider* xLightPosSlider = nullptr;
+    AbstractSlider* yLightPosSlider = nullptr;
+    AbstractSlider* zLightPosSlider = nullptr;
 
-    AbstractSlider* rIntensity = nullptr;
-    AbstractSlider* gIntensity = nullptr;
-    AbstractSlider* bIntensity = nullptr;
+    AbstractSlider* rIntensitySlider = nullptr;
+    AbstractSlider* gIntensitySlider = nullptr;
+    AbstractSlider* bIntensitySlider = nullptr;
     QCheckBox* rIntensCheckBox = nullptr;
     QCheckBox* gIntensCheckBox = nullptr;
     QCheckBox* bIntensCheckBox = nullptr;
+    int rIntensDelta = -1;
+    int gIntensDelta = -1;
+    int bIntensDelta = -1;
+    QTimer* rgbIntensiveTimer;
 
 
-    AbstractSlider* spotCutOff = nullptr;
-    AbstractSlider* spotExponent = nullptr;
-    AbstractSlider* shiness = nullptr;
+    AbstractSlider* spotCutOffSlider = nullptr;
+    AbstractSlider* spotExponentSlider = nullptr;
+    AbstractSlider* shinessSlider = nullptr;
 
-    AbstractSlider* rSpecularColor = nullptr;
-    AbstractSlider* gSpecularColor = nullptr;
-    AbstractSlider* bSpecularColor = nullptr;
+    AbstractSlider* rSpecularColorSlider = nullptr;
+    AbstractSlider* gSpecularColorSlider = nullptr;
+    AbstractSlider* bSpecularColorSlider = nullptr;
 
-    AbstractSlider* constantAtenuationFactor = nullptr;
-    AbstractSlider* linearAtenuationFactor = nullptr;
-    AbstractSlider* quadraticAtenuationFactor = nullptr;
+    AbstractSlider* constantAtenuationFactorSlider = nullptr;
+    AbstractSlider* linearAtenuationFactorSlider = nullptr;
+    AbstractSlider* quadraticAtenuationFactorSlider = nullptr;
 };

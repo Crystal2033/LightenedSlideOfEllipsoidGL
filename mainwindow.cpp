@@ -16,15 +16,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     lightingLayout = new QVBoxLayout();
     menuHorLayout = new QHBoxLayout();
+    glWidgetAndLabelsLay= new QVBoxLayout();
 
     myGLWidget = new MyGLWidget();
+    setNewPositionOnLabel();
+    glWidgetAndLabelsLay->addWidget(myGLWidget, 20);
+    glWidgetAndLabelsLay->addWidget(&positionLabel, 1, Qt::AlignCenter);
 
 
     setSliders();
 
     menuHorLayout->addLayout(lightingLayout, 6);
     lightingLayout->setContentsMargins(QMargins(0, 0, 20, 0));
-    menuHorLayout->addWidget(myGLWidget, 20);
+    menuHorLayout->addLayout(glWidgetAndLabelsLay, 20);
     menuHorLayout->setContentsMargins(QMargins(0, 0, 0, 0));
 
     mainVertLay->addLayout(menuHorLayout, 15);
@@ -33,6 +37,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     this->centralWidget()->setLayout(mainVertLay);
 
     sendStartValuesToGLWidget();
+
+    rgbIntensiveTimer = new QTimer();
+    connect(rgbIntensiveTimer, &QTimer::timeout, this, &MainWindow::rgbIntensiveAnimation);
 }
 
 
@@ -59,8 +66,8 @@ void MainWindow::setApproximateAndStretchSlider(Qt::Orientation sliderOrientatio
 
     ellipsoidFormSlidersLay = new QHBoxLayout();
     createSlider(approximateSlider, sliderOrientation, ellipsoidFormSlidersLay, APROX, 3, 100, 3);
-    createSlider(xEllipsoidStretch, sliderOrientation, ellipsoidFormSlidersLay, XSTRETCH, 1, 20, 10);
-    createSlider(yEllipsoidStretch, sliderOrientation, ellipsoidFormSlidersLay, YSTRETCH, 1, 20, 5);
+    createSlider(xEllipsoidStretchSlider, sliderOrientation, ellipsoidFormSlidersLay, XSTRETCH, 1, 20, 10);
+    createSlider(yEllipsoidStretchSlider, sliderOrientation, ellipsoidFormSlidersLay, YSTRETCH, 1, 20, 5);
 
     createGroupBox(ellipsoidSettingsGroup, ellipsoidFormSlidersLay, QString("Ellipsoid settings"));
 }
@@ -68,9 +75,9 @@ void MainWindow::setApproximateAndStretchSlider(Qt::Orientation sliderOrientatio
 void MainWindow::setShinessAndCutOffSliders(Qt::Orientation sliderOrientation){
 
     shinessAndCuts = new QHBoxLayout();
-    createSlider(shiness, sliderOrientation, shinessAndCuts, SHINESS, 0, 128, 25);
-    createSlider(spotCutOff, sliderOrientation, shinessAndCuts, SPOT_CUT_OFF, 0, 180, 180);
-    createSlider(spotExponent, sliderOrientation, shinessAndCuts, SPOT_EXPONENT, 0, 180, 0);
+    createSlider(shinessSlider, sliderOrientation, shinessAndCuts, SHINESS, 0, 128, 25);
+    createSlider(spotCutOffSlider, sliderOrientation, shinessAndCuts, SPOT_CUT_OFF, 0, 180, 180);
+    createSlider(spotExponentSlider, sliderOrientation, shinessAndCuts, SPOT_EXPONENT, 0, 180, 0);
 
     createGroupBox(shinessAndCutsGroup, shinessAndCuts, QString("Shiness and cut off settings"));
 }
@@ -104,14 +111,13 @@ void MainWindow::setSliders()
 }
 
 
-
 void MainWindow::setLightPositionsSliders(Qt::Orientation sliderOrientation){
 
 
     lightPositionsLay = new QHBoxLayout();
-    createSlider(xLightPos, sliderOrientation, lightPositionsLay, XLIGHT, -100, 100, 0);
-    createSlider(yLightPos, sliderOrientation, lightPositionsLay, YLIGHT, -100, 100, 2);
-    createSlider(zLightPos, sliderOrientation, lightPositionsLay, ZLIGHT, -100, 100, 5);
+    createSlider(xLightPosSlider, sliderOrientation, lightPositionsLay, XLIGHT, -100, 100, 0);
+    createSlider(yLightPosSlider, sliderOrientation, lightPositionsLay, YLIGHT, -100, 100, 2);
+    createSlider(zLightPosSlider, sliderOrientation, lightPositionsLay, ZLIGHT, -100, 100, 5);
 
     createGroupBox(lightPosGroup, lightPositionsLay, QString("Position of light"));
 }
@@ -119,27 +125,31 @@ void MainWindow::setLightPositionsSliders(Qt::Orientation sliderOrientation){
 void MainWindow::setIntensitySliders(Qt::Orientation sliderOrientation){
 
     lightIntensitiesLay = new QHBoxLayout();
-    QBoxLayout* sliderLay = createSlider(rIntensity, sliderOrientation, lightIntensitiesLay, RINTENSITY, 0, 200, 200);
+    QBoxLayout* sliderLay = createSlider(rIntensitySlider, sliderOrientation, lightIntensitiesLay, RINTENSITY, 0, 200, 200);
     rIntensCheckBox = new QCheckBox("Animate");
     sliderLay->addWidget(rIntensCheckBox, 1, Qt::AlignLeft);
 
-    sliderLay = createSlider(gIntensity, sliderOrientation, lightIntensitiesLay, GINTENSITY, 0, 200, 200);
+    sliderLay = createSlider(gIntensitySlider, sliderOrientation, lightIntensitiesLay, GINTENSITY, 0, 200, 200);
     gIntensCheckBox = new QCheckBox("Animate");
     sliderLay->addWidget(gIntensCheckBox, 1, Qt::AlignLeft);
 
-    sliderLay = createSlider(bIntensity, sliderOrientation, lightIntensitiesLay, BINTENSITY, 0, 200, 200);
+    sliderLay = createSlider(bIntensitySlider, sliderOrientation, lightIntensitiesLay, BINTENSITY, 0, 200, 200);
     bIntensCheckBox = new QCheckBox("Animate");
     sliderLay->addWidget(bIntensCheckBox, 1, Qt::AlignLeft);
 
     createGroupBox(lightIntensivityGroup, lightIntensitiesLay, QString("Light intensivity"));
+
+    connect(rIntensCheckBox, &QCheckBox::clicked, this, &MainWindow::checkBoxStateChanged);
+    connect(gIntensCheckBox, &QCheckBox::clicked, this, &MainWindow::checkBoxStateChanged);
+    connect(bIntensCheckBox, &QCheckBox::clicked, this, &MainWindow::checkBoxStateChanged);
 }
 
 void MainWindow::setAtenuationSliders(Qt::Orientation sliderOrientation)
 {
     atenuationFactorsLay = new QHBoxLayout();
-    createSlider(constantAtenuationFactor, sliderOrientation, atenuationFactorsLay, ATENUATION_CONST, 0, 50, 20);
-    createSlider(linearAtenuationFactor, sliderOrientation, atenuationFactorsLay, ATENUATION_LIN, 0, 50, 0);
-    createSlider(quadraticAtenuationFactor, sliderOrientation, atenuationFactorsLay, ATENUATION_QUAD, 0, 50, 0);
+    createSlider(constantAtenuationFactorSlider, sliderOrientation, atenuationFactorsLay, ATENUATION_CONST, 0, 50, 20);
+    createSlider(linearAtenuationFactorSlider, sliderOrientation, atenuationFactorsLay, ATENUATION_LIN, 0, 50, 0);
+    createSlider(quadraticAtenuationFactorSlider, sliderOrientation, atenuationFactorsLay, ATENUATION_QUAD, 0, 50, 0);
 
     createGroupBox(atenuationGroup, atenuationFactorsLay, QString("Light atenuation"));
 }
@@ -147,9 +157,9 @@ void MainWindow::setAtenuationSliders(Qt::Orientation sliderOrientation)
 void MainWindow::setSpecularColors(Qt::Orientation sliderOrientation)
 {
     specularColorsLay = new QHBoxLayout();
-    createSlider(rSpecularColor, sliderOrientation, specularColorsLay, RSPECULAR ,0, 200, 200);
-    createSlider(gSpecularColor, sliderOrientation, specularColorsLay, GSPECULAR ,0, 200, 200);
-    createSlider(bSpecularColor, sliderOrientation, specularColorsLay, BSPECULAR ,0, 200, 200);
+    createSlider(rSpecularColorSlider, sliderOrientation, specularColorsLay, RSPECULAR ,0, 200, 200);
+    createSlider(gSpecularColorSlider, sliderOrientation, specularColorsLay, GSPECULAR ,0, 200, 200);
+    createSlider(bSpecularColorSlider, sliderOrientation, specularColorsLay, BSPECULAR ,0, 200, 200);
 
     createGroupBox(specularSettingsGroup, specularColorsLay, QString("Specularity settings"));
 }
@@ -160,25 +170,25 @@ void MainWindow::sendStartValuesToGLWidget() const
     myGLWidget->setSlidersValues(yRotateSlider->getValue(), YROT);
     myGLWidget->setSlidersValues(zRotateSlider->getValue(), ZROT);
 
-    myGLWidget->setSlidersValues(xLightPos->getValue(), XLIGHT);
-    myGLWidget->setSlidersValues(yLightPos->getValue(), YLIGHT);
-    myGLWidget->setSlidersValues(zLightPos->getValue(), ZLIGHT);
+    myGLWidget->setSlidersValues(xLightPosSlider->getValue(), XLIGHT);
+    myGLWidget->setSlidersValues(yLightPosSlider->getValue(), YLIGHT);
+    myGLWidget->setSlidersValues(zLightPosSlider->getValue(), ZLIGHT);
 
-    myGLWidget->setSlidersValues(rIntensity->getValue(), RINTENSITY);
-    myGLWidget->setSlidersValues(gIntensity->getValue(), GINTENSITY);
-    myGLWidget->setSlidersValues(bIntensity->getValue(), BINTENSITY);
+    myGLWidget->setSlidersValues(rIntensitySlider->getValue(), RINTENSITY);
+    myGLWidget->setSlidersValues(gIntensitySlider->getValue(), GINTENSITY);
+    myGLWidget->setSlidersValues(bIntensitySlider->getValue(), BINTENSITY);
 
-    myGLWidget->setSlidersValues(spotCutOff->getValue(), SPOT_CUT_OFF);
-    myGLWidget->setSlidersValues(spotExponent->getValue(), SPOT_EXPONENT);
-    myGLWidget->setSlidersValues(shiness->getValue(), SHINESS);
+    myGLWidget->setSlidersValues(spotCutOffSlider->getValue(), SPOT_CUT_OFF);
+    myGLWidget->setSlidersValues(spotExponentSlider->getValue(), SPOT_EXPONENT);
+    myGLWidget->setSlidersValues(shinessSlider->getValue(), SHINESS);
 
-    myGLWidget->setSlidersValues(rSpecularColor->getValue(), RSPECULAR);
-    myGLWidget->setSlidersValues(gSpecularColor->getValue(), GSPECULAR);
-    myGLWidget->setSlidersValues(bSpecularColor->getValue(), BSPECULAR);
+    myGLWidget->setSlidersValues(rSpecularColorSlider->getValue(), RSPECULAR);
+    myGLWidget->setSlidersValues(gSpecularColorSlider->getValue(), GSPECULAR);
+    myGLWidget->setSlidersValues(bSpecularColorSlider->getValue(), BSPECULAR);
 
-    myGLWidget->setSlidersValues(constantAtenuationFactor->getValue(), ATENUATION_CONST);
-    myGLWidget->setSlidersValues(linearAtenuationFactor->getValue(), ATENUATION_LIN);
-    myGLWidget->setSlidersValues(quadraticAtenuationFactor->getValue(), ATENUATION_QUAD);
+    myGLWidget->setSlidersValues(constantAtenuationFactorSlider->getValue(), ATENUATION_CONST);
+    myGLWidget->setSlidersValues(linearAtenuationFactorSlider->getValue(), ATENUATION_LIN);
+    myGLWidget->setSlidersValues(quadraticAtenuationFactorSlider->getValue(), ATENUATION_QUAD);
 
 }
 
@@ -187,9 +197,66 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+int MainWindow::getNewIntensityForAnimation(const AbstractSlider* slider, int* delta)
+{
+    int currIntensityValue = slider->getValue();
+    currIntensityValue += *delta;
+    if(currIntensityValue > INTENSITY_DENUM){
+        currIntensityValue = INTENSITY_DENUM;
+        *delta = -*delta;
+    }
+    else if(currIntensityValue < 0){
+        currIntensityValue = 0;
+        *delta = -*delta;
+    }
+    return currIntensityValue;
+}
+
+void MainWindow::setNewPositionOnLabel()
+{
+    QString stringPosition = "xPos: ";
+    glm::vec3 currPos = myGLWidget->getCurrPosInWorld();
+    stringPosition += QString::number(currPos.x);
+    stringPosition += " yPos: ";
+    stringPosition += QString::number(currPos.y);
+    stringPosition += " zPos: ";
+    stringPosition += QString::number(currPos.z);
+    qInfo() << stringPosition;
+    positionLabel.setText(stringPosition);
+}
+
+void MainWindow::rgbIntensiveAnimation()
+{
+
+    if(!rIntensCheckBox->isChecked() && !gIntensCheckBox->isChecked() && !bIntensCheckBox->isChecked()){
+        rgbIntensiveTimer->stop();
+        qInfo() << "STOP";
+        return;
+    }
+
+    if(rIntensCheckBox->isChecked()){
+        rIntensitySlider->setValue(getNewIntensityForAnimation(rIntensitySlider, &rIntensDelta));
+    }
+    if(gIntensCheckBox->isChecked()){
+        gIntensitySlider->setValue(getNewIntensityForAnimation(gIntensitySlider, &gIntensDelta));
+    }
+    if(bIntensCheckBox->isChecked()){
+        bIntensitySlider->setValue(getNewIntensityForAnimation(bIntensitySlider, &bIntensDelta));
+    }
+
+}
+
+void MainWindow::checkBoxStateChanged()
+{
+    if(!rgbIntensiveTimer->isActive()){
+        rgbIntensiveTimer->start(10);
+    }
+}
+
 void MainWindow::keyPressEvent(QKeyEvent *ev)
 {
     myGLWidget->getKeyBoardEvent(ev);
+    setNewPositionOnLabel();
 }
 
 

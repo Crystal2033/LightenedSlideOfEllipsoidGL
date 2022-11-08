@@ -7,6 +7,12 @@
  ***************************************************************************/
 #include "classicslider.h"
 
+void ClassicSlider::setValue(int value)
+{
+    AbstractSlider::setValue(value);
+    classicSlider->setValue(value);
+}
+
 QBoxLayout* ClassicSlider::createSlider(QBoxLayout &layout, Qt::Orientation sliderOrientation, CHANGE_TYPE changeType, const int left, const int right, const int curr)
 {
     value = curr;
