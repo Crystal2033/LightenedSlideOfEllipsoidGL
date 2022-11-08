@@ -11,95 +11,137 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     this->setWindowTitle("Crystal3D");
     this->setWindowIcon(QIcon(":/Pics/Crystal.png"));
 
-    mainHorLay = new QVBoxLayout();
+    mainVertLay = new QVBoxLayout();
     menuVertLayout = new QVBoxLayout();
 
-    rotationSlidersLay =new QHBoxLayout();
-    ellipsoidFormSlidersLay = new QHBoxLayout();
-    lightPositionsLay = new QHBoxLayout();
-    lightIntensitiesLay = new QHBoxLayout();
-    shinessAndCuts = new QHBoxLayout();
-    specularColorsLay = new QHBoxLayout();
-    atenuationFactorsLay = new QHBoxLayout();
+    lightingLayout = new QVBoxLayout();
+    menuHorLayout = new QHBoxLayout();
 
-
-    menuVertLayout->addLayout(rotationSlidersLay);
-    menuVertLayout->addLayout(ellipsoidFormSlidersLay);
-    menuVertLayout->addLayout(lightPositionsLay);
-    menuVertLayout->addLayout(lightIntensitiesLay);
-    menuVertLayout->addLayout(shinessAndCuts);
-    menuVertLayout->addLayout(specularColorsLay);
-    menuVertLayout->addLayout(atenuationFactorsLay);
     myGLWidget = new MyGLWidget();
 
-    mainHorLay->addWidget(myGLWidget, 1);
-    mainHorLay->addLayout(menuVertLayout, 6);
 
-    this->centralWidget()->setLayout(mainHorLay);
-    setRotateSliders();
+    setSliders();
 
-    setApproximateAndStretchSlider();
+    menuHorLayout->addLayout(lightingLayout, 6);
+    lightingLayout->setContentsMargins(QMargins(0, 0, 20, 0));
+    menuHorLayout->addWidget(myGLWidget, 15);
+    menuHorLayout->setContentsMargins(QMargins(0, 0, 0, 20));
 
-    setLightPositionsSliders();
-    setIntensitySliders();
+    mainVertLay->addLayout(menuHorLayout, 15);
+    mainVertLay->addLayout(menuVertLayout, 1);
 
-    setSpecularColors();
-    setAtenuationSliders();
-    setShinessAndCutOffSliders();
+    this->centralWidget()->setLayout(mainVertLay);
 
     sendStartValuesToGLWidget();
 }
 
 
-void MainWindow::createSlider(AbstractSlider *&slider, QBoxLayout *lay, CHANGE_TYPE type, const int left, const int right, const int curr)
+void MainWindow::createSlider(AbstractSlider *&slider, Qt::Orientation sliderOrientation, QBoxLayout *lay, CHANGE_TYPE type, const int left, const int right, const int curr)
 {
     slider = new ClassicSlider();
-    slider->createSlider(*lay, type, left, right, curr);
+    slider->createSlider(*lay, sliderOrientation, type, left, right, curr);
     slider->addObserver(myGLWidget);
 }
 
-void MainWindow::setRotateSliders() {
-    createSlider(xRotateSlider, rotationSlidersLay, XROT, -180, 180, 0);
-    createSlider(yRotateSlider, rotationSlidersLay, YROT, -180, 180, 0);
-    createSlider(zRotateSlider, rotationSlidersLay, ZROT, -180, 180, 0);
+void MainWindow::setRotateSliders(Qt::Orientation sliderOrientation) {
+
+    rotationSlidersLay = new QHBoxLayout();
+    createSlider(xRotateSlider, sliderOrientation, rotationSlidersLay, XROT, -180, 180, 0);
+    createSlider(yRotateSlider, sliderOrientation, rotationSlidersLay, YROT, -180, 180, 0);
+    createSlider(zRotateSlider, sliderOrientation, rotationSlidersLay, ZROT, -180, 180, 0);
+
+    createGroupBox(rotationGroup, rotationSlidersLay, QString("Rotation angles"));
 }
 
-void MainWindow::setApproximateAndStretchSlider(){
-    createSlider(approximateSlider, ellipsoidFormSlidersLay, APROX, 3, 100, 3);
-    createSlider(xEllipsoidStretch, ellipsoidFormSlidersLay, XSTRETCH, 1, 20, 10);
-    createSlider(yEllipsoidStretch, ellipsoidFormSlidersLay, YSTRETCH, 1, 20, 5);
+void MainWindow::setApproximateAndStretchSlider(Qt::Orientation sliderOrientation){
+
+    ellipsoidFormSlidersLay = new QHBoxLayout();
+    createSlider(approximateSlider, sliderOrientation, ellipsoidFormSlidersLay, APROX, 3, 100, 3);
+    createSlider(xEllipsoidStretch, sliderOrientation, ellipsoidFormSlidersLay, XSTRETCH, 1, 20, 10);
+    createSlider(yEllipsoidStretch, sliderOrientation, ellipsoidFormSlidersLay, YSTRETCH, 1, 20, 5);
+
+    createGroupBox(ellipsoidSettingsGroup, ellipsoidFormSlidersLay, QString("Ellipsoid settings"));
 }
 
-void MainWindow::setShinessAndCutOffSliders(){
-    createSlider(shiness, shinessAndCuts, SHINESS, 0, 128, 25);
-    createSlider(spotCutOff, shinessAndCuts, SPOT_CUT_OFF, 0, 180, 180);
-    createSlider(spotExponent, shinessAndCuts, SPOT_EXPONENT, 0, 180, 0);
+void MainWindow::setShinessAndCutOffSliders(Qt::Orientation sliderOrientation){
+
+    shinessAndCuts = new QHBoxLayout();
+    createSlider(shiness, sliderOrientation, shinessAndCuts, SHINESS, 0, 128, 25);
+    createSlider(spotCutOff, sliderOrientation, shinessAndCuts, SPOT_CUT_OFF, 0, 180, 180);
+    createSlider(spotExponent, sliderOrientation, shinessAndCuts, SPOT_EXPONENT, 0, 180, 0);
+
+    createGroupBox(shinessAndCutsGroup, shinessAndCuts, QString("Shiness and cut off settings"));
 }
 
-void MainWindow::setLightPositionsSliders(){
-    createSlider(xLightPos, lightPositionsLay, XLIGHT, -100, 100, 0);
-    createSlider(yLightPos, lightPositionsLay, YLIGHT, -100, 100, 2);
-    createSlider(zLightPos, lightPositionsLay, ZLIGHT, -100, 100, 5);
-}
-
-void MainWindow::setIntensitySliders(){
-    createSlider(rIntensity, lightIntensitiesLay, RINTENSITY, 0, 200, 200);
-    createSlider(gIntensity, lightIntensitiesLay, GINTENSITY, 0, 200, 200);
-    createSlider(bIntensity, lightIntensitiesLay, BINTENSITY, 0, 200, 200);
-}
-
-void MainWindow::setAtenuationSliders()
+void MainWindow::createGroupBox(QGroupBox *groupBox, QBoxLayout *lay, QString groupName)
 {
-    createSlider(constantAtenuationFactor, atenuationFactorsLay, ATENUATION_CONST, 0, 50, 20);
-    createSlider(linearAtenuationFactor, atenuationFactorsLay, ATENUATION_LIN, 0, 50, 0);
-    createSlider(quadraticAtenuationFactor, atenuationFactorsLay, ATENUATION_QUAD, 0, 50, 0);
+    groupBox = new QGroupBox(groupName);
+    groupBox->setLayout(lay);
+
+    if(lay->expandingDirections() == Qt::Orientation::Vertical){
+        lightingLayout->addWidget(groupBox, 1);
+    }
+    else if(lay->expandingDirections() == Qt::Orientation::Horizontal){
+        menuVertLayout->addWidget(groupBox, 1);
+    }
 }
 
-void MainWindow::setSpecularColors()
+void MainWindow::setSliders()
 {
-    createSlider(rSpecularColor, specularColorsLay, RSPECULAR ,0, 200, 200);
-    createSlider(gSpecularColor, specularColorsLay, GSPECULAR ,0, 200, 200);
-    createSlider(bSpecularColor, specularColorsLay, BSPECULAR ,0, 200, 200);
+    setRotateSliders(Qt::Horizontal);
+
+    setApproximateAndStretchSlider(Qt::Horizontal);
+
+    setLightPositionsSliders(Qt::Horizontal);
+
+    setIntensitySliders(Qt::Vertical);
+    setSpecularColors(Qt::Vertical);
+    setAtenuationSliders(Qt::Vertical);
+
+    setShinessAndCutOffSliders(Qt::Horizontal);
+}
+
+
+
+void MainWindow::setLightPositionsSliders(Qt::Orientation sliderOrientation){
+
+
+    lightPositionsLay = new QHBoxLayout();
+    createSlider(xLightPos, sliderOrientation, lightPositionsLay, XLIGHT, -100, 100, 0);
+    createSlider(yLightPos, sliderOrientation, lightPositionsLay, YLIGHT, -100, 100, 2);
+    createSlider(zLightPos, sliderOrientation, lightPositionsLay, ZLIGHT, -100, 100, 5);
+
+    createGroupBox(lightPosGroup, lightPositionsLay, QString("Position of light"));
+}
+
+void MainWindow::setIntensitySliders(Qt::Orientation sliderOrientation){
+
+    lightIntensitiesLay = new QHBoxLayout();
+    createSlider(rIntensity, sliderOrientation, lightIntensitiesLay, RINTENSITY, 0, 200, 200);
+    createSlider(gIntensity, sliderOrientation, lightIntensitiesLay, GINTENSITY, 0, 200, 200);
+    createSlider(bIntensity, sliderOrientation, lightIntensitiesLay, BINTENSITY, 0, 200, 200);
+
+    createGroupBox(lightIntensivityGroup, lightIntensitiesLay, QString("Light intensivity"));
+}
+
+void MainWindow::setAtenuationSliders(Qt::Orientation sliderOrientation)
+{
+    atenuationFactorsLay = new QHBoxLayout();
+    createSlider(constantAtenuationFactor, sliderOrientation, atenuationFactorsLay, ATENUATION_CONST, 0, 50, 20);
+    createSlider(linearAtenuationFactor, sliderOrientation, atenuationFactorsLay, ATENUATION_LIN, 0, 50, 0);
+    createSlider(quadraticAtenuationFactor, sliderOrientation, atenuationFactorsLay, ATENUATION_QUAD, 0, 50, 0);
+
+    createGroupBox(atenuationGroup, atenuationFactorsLay, QString("Light atenuation"));
+}
+
+void MainWindow::setSpecularColors(Qt::Orientation sliderOrientation)
+{
+    specularColorsLay = new QHBoxLayout();
+    createSlider(rSpecularColor, sliderOrientation, specularColorsLay, RSPECULAR ,0, 200, 200);
+    createSlider(gSpecularColor, sliderOrientation, specularColorsLay, GSPECULAR ,0, 200, 200);
+    createSlider(bSpecularColor, sliderOrientation, specularColorsLay, BSPECULAR ,0, 200, 200);
+
+    createGroupBox(specularSettingsGroup, specularColorsLay, QString("Specularity settings"));
 }
 
 void MainWindow::sendStartValuesToGLWidget() const

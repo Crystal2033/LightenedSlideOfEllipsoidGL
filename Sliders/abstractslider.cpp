@@ -64,7 +64,7 @@ QString AbstractSlider::getNameByChangeType() const
             return "Cut off";
         }
         case SPOT_EXPONENT:{
-            return "Spot exponent";
+            return "Spot exp";
         }
         case SHINESS:{
             return "Shiness";

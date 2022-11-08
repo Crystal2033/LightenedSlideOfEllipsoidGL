@@ -17,7 +17,7 @@ class ClassicSlider : public AbstractSlider
     Q_OBJECT
 public:
     ClassicSlider() = default;
-    void createSlider(QBoxLayout& layout, CHANGE_TYPE changeType, const int left, const int right, const int curr) override;
+    void createSlider(QBoxLayout& layout, Qt::Orientation sliderOrientation, CHANGE_TYPE changeType, const int left, const int right, const int curr) override;
     ~ClassicSlider() = default;
 
 private slots:
@@ -27,7 +27,7 @@ private:
     QLabel* classicLabel = nullptr;
     QSlider* classicSlider = nullptr;
     QLCDNumber* classicNumGadget = nullptr;
-    QHBoxLayout* classicHorLay = nullptr;
+    QBoxLayout* classicLay = nullptr;
 };
 
 #endif // CLASSICSLIDER_H

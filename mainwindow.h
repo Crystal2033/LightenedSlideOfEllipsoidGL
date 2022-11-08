@@ -6,6 +6,7 @@
 #include "myglwidget.h"
 #include <QSurface>
 #include "Sliders/abstractslider.h"
+#include <QGroupBox>
 
 namespace Ui { class MainWindow; }
 
@@ -22,37 +23,54 @@ public:
 private:
     void keyPressEvent(QKeyEvent *ev) override;
 
-    void createSlider(AbstractSlider*& slider, QBoxLayout* lay, CHANGE_TYPE type, const int left, const int right, const int curr);
+    void createSlider(AbstractSlider*& slider, Qt::Orientation sliderOrientation, QBoxLayout* lay, CHANGE_TYPE type, const int left, const int right, const int curr);
 
-    void setRotateSliders();
+    void setRotateSliders(Qt::Orientation sliderOrientation);
 
-    void setApproximateAndStretchSlider();
+    void setApproximateAndStretchSlider(Qt::Orientation sliderOrientation);
 
-    void setLightPositionsSliders();
-    void setIntensitySliders();
-    void setAtenuationSliders();
+    void setLightPositionsSliders(Qt::Orientation sliderOrientation);
+    void setIntensitySliders(Qt::Orientation sliderOrientation);
+    void setAtenuationSliders(Qt::Orientation sliderOrientation);
 
-    void setSpecularColors();
-    void setShinessAndCutOffSliders();
+    void setSpecularColors(Qt::Orientation sliderOrientation);
+    void setShinessAndCutOffSliders(Qt::Orientation sliderOrientation);
 
+    void createGroupBox(QGroupBox* groupBox, QBoxLayout* lay, QString groupName);
+    void setSliders();
 
     MyGLWidget* myGLWidget = nullptr;
-    QVBoxLayout* mainHorLay = nullptr;
+    QVBoxLayout* mainVertLay = nullptr;
+
     QVBoxLayout* menuVertLayout = nullptr;
+    QHBoxLayout* menuHorLayout = nullptr;
 
-    QHBoxLayout* rotationSlidersLay = nullptr;
+    QGroupBox* rotationGroup;
+    QBoxLayout* rotationSlidersLay = nullptr;
 
-    QHBoxLayout* ellipsoidFormSlidersLay = nullptr;
+    QGroupBox* ellipsoidSettingsGroup;
+    QBoxLayout* ellipsoidFormSlidersLay = nullptr;
 
-    QHBoxLayout* lightPositionsLay = nullptr;
+    QGroupBox* lightPosGroup;
+    QBoxLayout* lightPositionsLay = nullptr;
 
-    QHBoxLayout* lightIntensitiesLay = nullptr;
+    QGroupBox* shinessAndCutsGroup;
+    QBoxLayout* shinessAndCuts = nullptr;
 
-    QHBoxLayout* shinessAndCuts = nullptr;
 
-    QHBoxLayout* specularColorsLay = nullptr;
 
-    QHBoxLayout* atenuationFactorsLay = nullptr;
+    QVBoxLayout* lightingLayout;
+
+    QGroupBox* lightIntensivityGroup;
+    QBoxLayout* lightIntensitiesLay = nullptr;
+
+
+
+    QGroupBox* specularSettingsGroup;
+    QBoxLayout* specularColorsLay = nullptr;
+
+    QGroupBox* atenuationGroup;
+    QBoxLayout* atenuationFactorsLay = nullptr;
 
     Ui::MainWindow* ui;
 
