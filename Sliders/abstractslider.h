@@ -16,11 +16,12 @@ class AbstractSlider : public QWidget, InterfaceSubject
     Q_OBJECT
 public:
     explicit AbstractSlider(QWidget *parent = nullptr);
-    virtual void createSlider(QBoxLayout& layout, Qt::Orientation sliderOrientation, CHANGE_TYPE changeType, const int left, const int right, const int curr) = 0;
+    virtual QBoxLayout* createSlider(QBoxLayout& layout, Qt::Orientation sliderOrientation, CHANGE_TYPE changeType, const int left, const int right, const int curr) = 0;
     void addObserver(InterfaceObserver *observer);
     void removeObserver(InterfaceObserver *observer);
     virtual ~AbstractSlider() = default;
     int getValue()const;
+    void setValue(int value);
 
 signals:
 

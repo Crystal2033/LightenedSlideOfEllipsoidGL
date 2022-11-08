@@ -7,6 +7,7 @@
 #include <QSurface>
 #include "Sliders/abstractslider.h"
 #include <QGroupBox>
+#include <QCheckBox>
 
 namespace Ui { class MainWindow; }
 
@@ -23,7 +24,7 @@ public:
 private:
     void keyPressEvent(QKeyEvent *ev) override;
 
-    void createSlider(AbstractSlider*& slider, Qt::Orientation sliderOrientation, QBoxLayout* lay, CHANGE_TYPE type, const int left, const int right, const int curr);
+    QBoxLayout* createSlider(AbstractSlider*& slider, Qt::Orientation sliderOrientation, QBoxLayout* lay, CHANGE_TYPE type, const int left, const int right, const int curr);
 
     void setRotateSliders(Qt::Orientation sliderOrientation);
 
@@ -58,12 +59,10 @@ private:
     QBoxLayout* shinessAndCuts = nullptr;
 
 
-
     QVBoxLayout* lightingLayout;
 
     QGroupBox* lightIntensivityGroup;
     QBoxLayout* lightIntensitiesLay = nullptr;
-
 
 
     QGroupBox* specularSettingsGroup;
@@ -90,6 +89,10 @@ private:
     AbstractSlider* rIntensity = nullptr;
     AbstractSlider* gIntensity = nullptr;
     AbstractSlider* bIntensity = nullptr;
+    QCheckBox* rIntensCheckBox = nullptr;
+    QCheckBox* gIntensCheckBox = nullptr;
+    QCheckBox* bIntensCheckBox = nullptr;
+
 
     AbstractSlider* spotCutOff = nullptr;
     AbstractSlider* spotExponent = nullptr;

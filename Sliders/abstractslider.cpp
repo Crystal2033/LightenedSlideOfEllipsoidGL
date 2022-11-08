@@ -121,3 +121,8 @@ int AbstractSlider::getValue() const
 {
     return value;
 }
+
+void AbstractSlider::setValue(int value)
+{
+    this->value = value;
+}

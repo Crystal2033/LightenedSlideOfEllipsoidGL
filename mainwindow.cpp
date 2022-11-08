@@ -24,8 +24,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     menuHorLayout->addLayout(lightingLayout, 6);
     lightingLayout->setContentsMargins(QMargins(0, 0, 20, 0));
-    menuHorLayout->addWidget(myGLWidget, 15);
-    menuHorLayout->setContentsMargins(QMargins(0, 0, 0, 20));
+    menuHorLayout->addWidget(myGLWidget, 20);
+    menuHorLayout->setContentsMargins(QMargins(0, 0, 0, 0));
 
     mainVertLay->addLayout(menuHorLayout, 15);
     mainVertLay->addLayout(menuVertLayout, 1);
@@ -36,11 +36,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 }
 
 
-void MainWindow::createSlider(AbstractSlider *&slider, Qt::Orientation sliderOrientation, QBoxLayout *lay, CHANGE_TYPE type, const int left, const int right, const int curr)
+QBoxLayout* MainWindow::createSlider(AbstractSlider *&slider, Qt::Orientation sliderOrientation, QBoxLayout *lay, CHANGE_TYPE type, const int left, const int right, const int curr)
 {
+
     slider = new ClassicSlider();
-    slider->createSlider(*lay, sliderOrientation, type, left, right, curr);
+    QBoxLayout* sliderLay = slider->createSlider(*lay, sliderOrientation, type, left, right, curr);
     slider->addObserver(myGLWidget);
+    return sliderLay;
 }
 
 void MainWindow::setRotateSliders(Qt::Orientation sliderOrientation) {
@@ -117,9 +119,17 @@ void MainWindow::setLightPositionsSliders(Qt::Orientation sliderOrientation){
 void MainWindow::setIntensitySliders(Qt::Orientation sliderOrientation){
 
     lightIntensitiesLay = new QHBoxLayout();
-    createSlider(rIntensity, sliderOrientation, lightIntensitiesLay, RINTENSITY, 0, 200, 200);
-    createSlider(gIntensity, sliderOrientation, lightIntensitiesLay, GINTENSITY, 0, 200, 200);
-    createSlider(bIntensity, sliderOrientation, lightIntensitiesLay, BINTENSITY, 0, 200, 200);
+    QBoxLayout* sliderLay = createSlider(rIntensity, sliderOrientation, lightIntensitiesLay, RINTENSITY, 0, 200, 200);
+    rIntensCheckBox = new QCheckBox("Animate");
+    sliderLay->addWidget(rIntensCheckBox, 1, Qt::AlignLeft);
+
+    sliderLay = createSlider(gIntensity, sliderOrientation, lightIntensitiesLay, GINTENSITY, 0, 200, 200);
+    gIntensCheckBox = new QCheckBox("Animate");
+    sliderLay->addWidget(gIntensCheckBox, 1, Qt::AlignLeft);
+
+    sliderLay = createSlider(bIntensity, sliderOrientation, lightIntensitiesLay, BINTENSITY, 0, 200, 200);
+    bIntensCheckBox = new QCheckBox("Animate");
+    sliderLay->addWidget(bIntensCheckBox, 1, Qt::AlignLeft);
 
     createGroupBox(lightIntensivityGroup, lightIntensitiesLay, QString("Light intensivity"));
 }
