@@ -66,8 +66,12 @@ void ClassicSlider::onValueChanged(int val)
 void ClassicSlider::setStyles()
 {
     classicNumGadget->setStyleSheet("QLCDNumber{"
-                                    "background-color: rgb(77, 138, 113);"
+                                    "background-color: #1c1b21;"
                                     "border-radius: 5px;"
+                                    "color:white;"
+                                    "}"
+                                    "QLCDNumber:hover{"
+                                    "background-color: #373d5a;"
                                     "}"
                                     ""
                                     "");
@@ -79,7 +83,8 @@ void ClassicSlider::setStyles()
     classicSlider->setStyleSheet("QSlider::handle{"
                                  "background-color:white;"
                                  "}"
-                                 ""
-                                 ""
+                                 "QSlider::handle:hover{"
+                                 "background-color: #78f2c5;"
+                                 "}"
                                  "");
 }

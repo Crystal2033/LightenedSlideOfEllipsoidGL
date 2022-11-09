@@ -47,6 +47,8 @@ private:
 
     int getNewIntensityForAnimation(const AbstractSlider* slider, int* delta);
     void setNewPositionOnLabel();
+
+    void setStyles();
     QLabel positionLabel;
 
     MyGLWidget* myGLWidget = nullptr;

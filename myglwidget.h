@@ -67,7 +67,7 @@ private:
 
     float xCameraPos = 0.0;
     float yCameraPos = 0.0;
-    float zCameraPos = 6.0;
+    float zCameraPos = 4.5;
 
 
     void drawFigure();

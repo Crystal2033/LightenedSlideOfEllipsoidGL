@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     rgbIntensiveTimer = new QTimer();
     connect(rgbIntensiveTimer, &QTimer::timeout, this, &MainWindow::rgbIntensiveAnimation);
+    setStyles();
 }
 
 
@@ -65,9 +66,9 @@ void MainWindow::setRotateSliders(Qt::Orientation sliderOrientation) {
 void MainWindow::setApproximateAndStretchSlider(Qt::Orientation sliderOrientation){
 
     ellipsoidFormSlidersLay = new QHBoxLayout();
-    createSlider(approximateSlider, sliderOrientation, ellipsoidFormSlidersLay, APROX, 3, 100, 3);
-    createSlider(xEllipsoidStretchSlider, sliderOrientation, ellipsoidFormSlidersLay, XSTRETCH, 1, 20, 10);
-    createSlider(yEllipsoidStretchSlider, sliderOrientation, ellipsoidFormSlidersLay, YSTRETCH, 1, 20, 5);
+    createSlider(approximateSlider, sliderOrientation, ellipsoidFormSlidersLay, APROX, 3, 300, 3);
+    createSlider(xEllipsoidStretchSlider, sliderOrientation, ellipsoidFormSlidersLay, XSTRETCH, 1, 20, 15);
+    createSlider(yEllipsoidStretchSlider, sliderOrientation, ellipsoidFormSlidersLay, YSTRETCH, 1, 20, 10);
 
     createGroupBox(ellipsoidSettingsGroup, ellipsoidFormSlidersLay, QString("Ellipsoid settings"));
 }
@@ -88,7 +89,6 @@ void MainWindow::createGroupBox(QGroupBox *groupBox, QBoxLayout *lay, QString gr
     groupBox->setLayout(lay);
     groupBox->setStyleSheet("QGroupBox:title {"
                             "color: white;"
-                            ""
                             "}"
                             "QGroupBox > *{"
                             "background-color: rgb(48, 107, 103);"
@@ -96,6 +96,7 @@ void MainWindow::createGroupBox(QGroupBox *groupBox, QBoxLayout *lay, QString gr
                             "QGroupBox{"
                             "background-color: rgb(48, 107, 103);"
                             "}"
+                            ""
                             "");
 
     if(lay->expandingDirections() == Qt::Orientation::Vertical){
@@ -138,26 +139,16 @@ void MainWindow::setIntensitySliders(Qt::Orientation sliderOrientation){
     lightIntensitiesLay = new QHBoxLayout();
     QBoxLayout* sliderLay = createSlider(rIntensitySlider, sliderOrientation, lightIntensitiesLay, RINTENSITY, 0, 200, 200);
     rIntensCheckBox = new QCheckBox("Animate");
-    rIntensCheckBox->setStyleSheet("color: white;"
-                                   "font-weight: bold;"
-                                   "font-family: \"Times New Roman\", Times, serif;"
-                                   "font-size: 15px;");
+
     sliderLay->addWidget(rIntensCheckBox, 1, Qt::AlignLeft);
 
     sliderLay = createSlider(gIntensitySlider, sliderOrientation, lightIntensitiesLay, GINTENSITY, 0, 200, 200);
     gIntensCheckBox = new QCheckBox("Animate");
-    gIntensCheckBox->setStyleSheet("color: white;"
-                                   "font-weight: bold;"
-                                   "font-family: \"Times New Roman\", Times, serif;"
-                                   "font-size: 15px;");
     sliderLay->addWidget(gIntensCheckBox, 1, Qt::AlignLeft);
 
     sliderLay = createSlider(bIntensitySlider, sliderOrientation, lightIntensitiesLay, BINTENSITY, 0, 200, 200);
     bIntensCheckBox = new QCheckBox("Animate");
-    bIntensCheckBox->setStyleSheet("color: white;"
-                                   "font-weight: bold;"
-                                   "font-family: \"Times New Roman\", Times, serif;"
-                                   "font-size: 15px;");
+
     sliderLay->addWidget(bIntensCheckBox, 1, Qt::AlignLeft);
 
     createGroupBox(lightIntensivityGroup, lightIntensitiesLay, QString("Light intensivity"));
@@ -249,6 +240,22 @@ void MainWindow::setNewPositionOnLabel()
                                 "font-family: \"Times New Roman\", Times, serif;"
                                 "font-size: 20px;");
     positionLabel.setText(stringPosition);
+}
+
+void MainWindow::setStyles()
+{
+    rIntensCheckBox->setStyleSheet("color: white;"
+                                   "font-weight: bold;"
+                                   "font-family: \"Times New Roman\", Times, serif;"
+                                   "font-size: 15px;");
+    gIntensCheckBox->setStyleSheet("color: white;"
+                                   "font-weight: bold;"
+                                   "font-family: \"Times New Roman\", Times, serif;"
+                                   "font-size: 15px;");
+    bIntensCheckBox->setStyleSheet("color: white;"
+                                   "font-weight: bold;"
+                                   "font-family: \"Times New Roman\", Times, serif;"
+                                   "font-size: 15px;");
 }
 
 void MainWindow::rgbIntensiveAnimation()
