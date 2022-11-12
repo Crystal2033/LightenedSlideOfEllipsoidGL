@@ -45,7 +45,7 @@ private:
     void createGroupBox(QGroupBox* groupBox, QBoxLayout* lay, QString groupName);
     void setSliders();
 
-    int getNewIntensityForAnimation(const AbstractSlider* slider, int* delta);
+    int getNewIntensityForAnimation(const AbstractSlider* slider, int* delta, int* currIntensValue);
     void setNewPositionOnLabel();
 
     void setStyles();
@@ -104,6 +104,9 @@ private:
     QCheckBox* rIntensCheckBox = nullptr;
     QCheckBox* gIntensCheckBox = nullptr;
     QCheckBox* bIntensCheckBox = nullptr;
+    int currRIntensValue = 0;
+    int currGIntensValue = 0;
+    int currBIntensValue = 0;
     int rIntensDelta = -1;
     int gIntensDelta = -1;
     int bIntensDelta = -1;

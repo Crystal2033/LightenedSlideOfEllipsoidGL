@@ -66,7 +66,7 @@ void MainWindow::setRotateSliders(Qt::Orientation sliderOrientation) {
 void MainWindow::setApproximateAndStretchSlider(Qt::Orientation sliderOrientation){
 
     ellipsoidFormSlidersLay = new QHBoxLayout();
-    createSlider(approximateSlider, sliderOrientation, ellipsoidFormSlidersLay, APROX, 3, 300, 3);
+    createSlider(approximateSlider, sliderOrientation, ellipsoidFormSlidersLay, APROX, 3, 1000, 3);
     createSlider(xEllipsoidStretchSlider, sliderOrientation, ellipsoidFormSlidersLay, XSTRETCH, 1, 20, 15);
     createSlider(yEllipsoidStretchSlider, sliderOrientation, ellipsoidFormSlidersLay, YSTRETCH, 1, 20, 10);
 
@@ -137,16 +137,19 @@ void MainWindow::setLightPositionsSliders(Qt::Orientation sliderOrientation){
 void MainWindow::setIntensitySliders(Qt::Orientation sliderOrientation){
 
     lightIntensitiesLay = new QHBoxLayout();
-    QBoxLayout* sliderLay = createSlider(rIntensitySlider, sliderOrientation, lightIntensitiesLay, RINTENSITY, 0, 200, 200);
+    QBoxLayout* sliderLay = createSlider(rIntensitySlider, sliderOrientation, lightIntensitiesLay, RINTENSITY, 0, 200, 0);
+    currRIntensValue = rIntensitySlider->getValue();
     rIntensCheckBox = new QCheckBox("Animate");
 
     sliderLay->addWidget(rIntensCheckBox, 1, Qt::AlignLeft);
 
-    sliderLay = createSlider(gIntensitySlider, sliderOrientation, lightIntensitiesLay, GINTENSITY, 0, 200, 200);
+    sliderLay = createSlider(gIntensitySlider, sliderOrientation, lightIntensitiesLay, GINTENSITY, 0, 200, 0);
+    currGIntensValue = gIntensitySlider->getValue();
     gIntensCheckBox = new QCheckBox("Animate");
     sliderLay->addWidget(gIntensCheckBox, 1, Qt::AlignLeft);
 
-    sliderLay = createSlider(bIntensitySlider, sliderOrientation, lightIntensitiesLay, BINTENSITY, 0, 200, 200);
+    sliderLay = createSlider(bIntensitySlider, sliderOrientation, lightIntensitiesLay, BINTENSITY, 0, 200, 0);
+    currBIntensValue = bIntensitySlider->getValue();
     bIntensCheckBox = new QCheckBox("Animate");
 
     sliderLay->addWidget(bIntensCheckBox, 1, Qt::AlignLeft);
@@ -211,19 +214,23 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-int MainWindow::getNewIntensityForAnimation(const AbstractSlider* slider, int* delta)
+int MainWindow::getNewIntensityForAnimation(const AbstractSlider* slider, int* delta, int* currIntensValue)
 {
-    int currIntensityValue = slider->getValue();
-    currIntensityValue += *delta;
-    if(currIntensityValue > INTENSITY_DENUM){
-        currIntensityValue = INTENSITY_DENUM;
+    *currIntensValue +=*delta;
+
+    int sinusIntens = abs(sin(*currIntensValue*M_PI/180))* (int)INTENSITY_DENUM;
+
+
+    if(*currIntensValue > INTENSITY_DENUM){
+        *currIntensValue = INTENSITY_DENUM;
         *delta = -*delta;
     }
-    else if(currIntensityValue < 0){
-        currIntensityValue = 0;
+    else if(*currIntensValue < 0){
+        *currIntensValue = 0;
         *delta = -*delta;
     }
-    return currIntensityValue;
+
+    return sinusIntens;
 }
 
 void MainWindow::setNewPositionOnLabel()
@@ -267,21 +274,24 @@ void MainWindow::rgbIntensiveAnimation()
     }
 
     if(rIntensCheckBox->isChecked()){
-        rIntensitySlider->setValue(getNewIntensityForAnimation(rIntensitySlider, &rIntensDelta));
+        rIntensitySlider->setValue(getNewIntensityForAnimation(rIntensitySlider, &rIntensDelta, &currRIntensValue));
     }
     if(gIntensCheckBox->isChecked()){
-        gIntensitySlider->setValue(getNewIntensityForAnimation(gIntensitySlider, &gIntensDelta));
+        gIntensitySlider->setValue(getNewIntensityForAnimation(gIntensitySlider, &gIntensDelta, &currGIntensValue));
     }
     if(bIntensCheckBox->isChecked()){
-        bIntensitySlider->setValue(getNewIntensityForAnimation(bIntensitySlider, &bIntensDelta));
+        bIntensitySlider->setValue(getNewIntensityForAnimation(bIntensitySlider, &bIntensDelta, &currBIntensValue));
     }
 
 }
 
 void MainWindow::checkBoxStateChanged()
 {
+    currRIntensValue = rIntensitySlider->getValue();
+    currGIntensValue = gIntensitySlider->getValue();
+    currBIntensValue = bIntensitySlider->getValue();
     if(!rgbIntensiveTimer->isActive()){
-        rgbIntensiveTimer->start(10);
+        rgbIntensiveTimer->start(20);
     }
 }
 
