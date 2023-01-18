@@ -1,4 +1,12 @@
 # LightenedSlideOfEllipsoidGL
+<H1>Control:</H1>
+<h2>W -- up (y += 0.5)</h2>
+<h2>S -- down (y -= 0.5)</h2>
+<h2>A -- left (x -= 0.5)</h2>
+<h2>D -- right (x += 0.5)</h2>
+
+<h2>F -- in Front (z += 0.5)</h2>
+<h2>R -- Reverse (back) (z -= 0.5)</h2>
 
 ![StartView](https://user-images.githubusercontent.com/90513443/213267042-0ee9e271-c13d-4569-80bd-23dab28839b9.PNG)
 ![cutOff](https://user-images.githubusercontent.com/90513443/213266878-cfe48824-2514-4dcb-8c4b-85f15416e4d5.PNG)
@@ -9,3 +17,5 @@
 ![stretch](https://user-images.githubusercontent.com/90513443/213266930-df2eedae-7ac8-48c7-835b-841adc88b33f.PNG)
 
 ![SecondView](https://user-images.githubusercontent.com/90513443/213267044-a0815793-c7a5-4540-a26a-a81b4925b6da.PNG)
+
+
